@@ -1,0 +1,28 @@
+:root {
+    --black-500: hsl(0 calc(1 * 0%) 0% / 1);
+    --white-500: hsl(0 calc(1 * 0%) 100% / 1);
+}
+
+.image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--black-500);
+    border-radius: 4px;
+    min-height: 300px;
+    height: 400px;
+    max-height: 500px;
+}
+
+.overlay {
+    /* z-index: 1; */
+    border: 5px solid var(--white-500);
+    box-sizing: border-box;
+    pointer-events: none;
+    position: absolute;
+    box-shadow: rgba(47, 49, 54, .6)0 0 0 9999px;
+    opacity: 1;
+    /* This part is programatically done */
+}
