@@ -3,6 +3,7 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import ImageDialog from '@/components/ImageDialog';
+import sendImage from '@/lib/sendImage';
 
 export default function UploadImage() {
     const inputElem = useRef<null | HTMLInputElement>(null);
@@ -54,6 +55,10 @@ export default function UploadImage() {
                 setOpen={setOpenDialog}
                 imageHigh={imgHigh}
                 imageWidth={imgWidth}
+                sendImage={() => {
+                    if (inputElem.current && inputElem.current.files && inputElem.current.files.length == 1)
+                        sendImage(inputElem.current.files[0])
+                }}
             />
         </div>
     )

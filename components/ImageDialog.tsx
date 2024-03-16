@@ -16,10 +16,11 @@ interface ImageDialogProps {
     imageWidth: number;
     imageHigh: number;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    sendImage: () => void
 }
 
 
-export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageWidth }: ImageDialogProps) {
+export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageWidth, sendImage }: ImageDialogProps) {
     const imgRef = useRef<null | HTMLImageElement>(null);
     const [imgZoomIn, setImgZoomIn] = useState(1);
     const widthCalc = (imageWidth / imageHigh) * 400
@@ -156,6 +157,8 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                             console.log("TranslateY: ", translateY)
                             console.log("X1 is: ", x1);
                             console.log("Y1 is: ", y1)
+
+                            sendImage();
 
 
                         }}
