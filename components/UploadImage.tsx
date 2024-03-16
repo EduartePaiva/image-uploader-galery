@@ -35,12 +35,11 @@ export default function UploadImage() {
     return (
         <div>
             <input
-                className="hidden"
+                className="bg-transparent flex-1 border-none outline-none hidden"
                 type="file"
-                id='input'
-                ref={inputElem}
-                accept='image/*'
+                accept='image/jpeg,image/png,image/webp'
                 onChange={inputOnChange}
+                ref={inputElem}
                 onClick={(e) => e.currentTarget.value = ""}
             />
             <Button

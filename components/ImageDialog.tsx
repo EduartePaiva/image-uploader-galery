@@ -151,13 +151,6 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                             const x1 = ((imageWidth - originPortraitB) / 2) - originTX
                             const y1 = ((imageHigh - originPortraitB) / 2) - originTY
 
-
-
-                            console.log("originTX: ", originTX)
-                            console.log("TranslateY: ", translateY)
-                            console.log("X1 is: ", x1);
-                            console.log("Y1 is: ", y1)
-
                             sendImage();
 
 
