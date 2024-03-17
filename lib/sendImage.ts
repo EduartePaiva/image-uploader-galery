@@ -1,10 +1,26 @@
 import getSignedURL from "@/actions/getSignedURLAction";
 
+
+const computeSHA256 = async (file: File) => {
+    const buffer = await file.arrayBuffer()
+    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("")
+    return hashHex
+}
+
 export default async function sendImage(file: File) {
     try {
         //statusmessage(uploading file)
         //setLoading(true)
-        const signedURLResult = await getSignedURL()
+        const checksum = await computeSHA256(file)
+        const signedURLResult = await getSignedURL(
+            file.type,
+            file.size,
+            checksum
+        )
         if (signedURLResult.failure !== undefined) {
             throw (new Error(signedURLResult.failure))
         }

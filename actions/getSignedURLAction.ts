@@ -4,6 +4,11 @@ import { auth } from "@clerk/nextjs"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
+import crypto from "crypto"
+const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
+
+
+
 const s3 = new S3Client({
     region: process.env.AWS_BUCKET_REGION!,
     credentials: {
@@ -36,10 +41,15 @@ export default async function getSignedURL(type: string, size: number, checksum:
 
     const putObjectCommand = new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME!,
-        Key: "test-file",
+        Key: generateFileName(),
         ContentType: type,
-        ContentLength: size
+        ContentLength: size,
+        ChecksumSHA256: checksum,
+        Metadata: {
+            userId
+        }
     })
+    // the metadata will be used to associate data with s3 later
 
     const signedURL = await getSignedUrl(s3, putObjectCommand, {
         expiresIn: 60
