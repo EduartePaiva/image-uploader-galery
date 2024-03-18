@@ -3,13 +3,13 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import ImageDialog from '@/components/ImageDialog';
-import sendImage from '@/lib/sendImage';
 
 export default function UploadImage() {
     const inputElem = useRef<null | HTMLInputElement>(null);
-    const [imageUrl, setImageUrl] = useState("")
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
     const [imgWidth, setImageWidth] = useState(0)
     const [imgHigh, setImageHigh] = useState(0)
+    const [imgFile, setImgFile] = useState<undefined | File>();
     const [openDialog, setOpenDialog] = useState(false)
 
     const buttonClick = () => {
@@ -20,14 +20,15 @@ export default function UploadImage() {
     const inputOnChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return
         const file = e.target.files[0]
-        URL.revokeObjectURL(imageUrl)
-        const url2 = URL.createObjectURL(file)
+        if (imageUrl) URL.revokeObjectURL(imageUrl)
+        const new_url = URL.createObjectURL(file)
         const img = new Image()
-        img.src = url2
+        img.src = new_url
         img.onload = () => {
+            setImgFile(file)
             setImageWidth(img.width)
             setImageHigh(img.height)
-            setImageUrl(url2)
+            setImageUrl(new_url)
             setOpenDialog(true)
         }
     }
@@ -48,17 +49,14 @@ export default function UploadImage() {
             >
                 Select Image
             </Button>
-            <ImageDialog
+            {imageUrl && imgFile && <ImageDialog
                 imageUrl={imageUrl}
                 open={openDialog}
                 setOpen={setOpenDialog}
                 imageHigh={imgHigh}
                 imageWidth={imgWidth}
-                sendImage={() => {
-                    if (inputElem.current && inputElem.current.files && inputElem.current.files.length == 1)
-                        sendImage(inputElem.current.files[0])
-                }}
-            />
+                image_file={imgFile}
+            />}
         </div>
     )
 }

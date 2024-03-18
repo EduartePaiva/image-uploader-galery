@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import "@/components/imageDialog.css"
 import { useEffect, useRef, useState } from "react";
 import { Slider } from "./ui/slider";
+import toast from "react-hot-toast";
+import sendImage from "@/lib/sendImage";
 
 interface ImageDialogProps {
     open: boolean;
@@ -16,11 +18,11 @@ interface ImageDialogProps {
     imageWidth: number;
     imageHigh: number;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    sendImage: () => void
+    image_file: File
 }
 
 
-export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageWidth, sendImage }: ImageDialogProps) {
+export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageWidth, image_file }: ImageDialogProps) {
     const imgRef = useRef<null | HTMLImageElement>(null);
     const [imgZoomIn, setImgZoomIn] = useState(1);
     const widthCalc = (imageWidth / imageHigh) * 400
@@ -30,6 +32,8 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
     const maxMoveY = (400 * imgZoomIn - portraitBoundary) / 2
     const [translateX, setTranslateX] = useState(0)
     const [translateY, setTranslateY] = useState(0)
+
+    const [sending, setSending] = useState(false)
 
 
     useEffect(() => {
@@ -80,13 +84,16 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
         }
     }
 
+    const closeDialog = (open: boolean = false) => {
+        URL.revokeObjectURL(imageUrl)
+        setTranslateX(0)
+        setTranslateY(0)
+        setImgZoomIn(1)
+        setOpen(open)
+    }
+
     return (
-        <Dialog open={open} onOpenChange={(open) => {
-            setTranslateX(0)
-            setTranslateY(0)
-            setImgZoomIn(1)
-            setOpen(open)
-        }}>
+        <Dialog open={open} onOpenChange={closeDialog}>
             <DialogContent
                 onInteractOutside={(e) => e.preventDefault()}
                 className="
@@ -132,7 +139,8 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                     <Button
                         variant={"default"}
                         className="rounded-sm"
-                        onClick={() => {
+                        disabled={sending}
+                        onClick={async () => {
                             if (imgRef.current == null) return
                             // what I have to do?
                             // First I have to find X1, X2, Y1, Y2
@@ -150,8 +158,32 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                             //starting point idea
                             const x1 = ((imageWidth - originPortraitB) / 2) - originTX
                             const y1 = ((imageHigh - originPortraitB) / 2) - originTY
+                            const newX1 = x1 < 0 ? "0" : Math.trunc(x1).toString()
+                            const newY1 = y1 < 0 ? "0" : Math.trunc(y1).toString()
+                            const newPortraitWidth = Math.trunc(originPortraitB).toString()
 
-                            sendImage();
+                            console.log(newX1, newY1, newPortraitWidth)
+
+                            const toastId = toast.loading("Saving image...")
+                            try {
+                                setSending(true)
+                                await sendImage(
+                                    image_file,
+                                    newX1,
+                                    newY1,
+                                    newPortraitWidth
+                                )
+                                toast.success(<b>Image saved!</b>, {
+                                    id: toastId
+                                })
+                                closeDialog()
+                            } catch (err) {
+                                toast.error(<b>Could not save.</b>, {
+                                    id: toastId
+                                })
+                            } finally {
+                                setSending(false)
+                            }
 
 
                         }}

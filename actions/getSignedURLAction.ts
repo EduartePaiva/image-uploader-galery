@@ -25,7 +25,14 @@ const acceptedTypes = [
 
 const maxFileSize = 1024 * 1024 * 10 //10MB
 
-export default async function getSignedURL(type: string, size: number, checksum: string) {
+export default async function getSignedURL(
+    type: string,
+    size: number,
+    checksum: string,
+    x1: string,
+    x2: string,
+    portraitWidth: string
+) {
     const { userId } = auth()
     if (!userId) {
         return { failure: "Not authenticated" }
@@ -46,7 +53,10 @@ export default async function getSignedURL(type: string, size: number, checksum:
         ContentLength: size,
         ChecksumSHA256: checksum,
         Metadata: {
-            userId
+            userId,
+            x1,
+            x2,
+            portraitWidth
         }
     })
     // the metadata will be used to associate data with s3 later
