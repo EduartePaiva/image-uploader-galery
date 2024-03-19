@@ -45,15 +45,18 @@ export default async function getSignedURL(
 
     }
 
+    const fileName = generateFileName()
+    console.log(fileName)
+    //2726c7d9e13d3ae00103daae8a98f0e2c2b47ad7c0f28802127e1b6070a265af
+    //2726c7d9e13d3ae00103daae8a98f0e2c2b47ad7c0f28802127e1b6070a265af
 
     const putObjectCommand = new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME!,
-        Key: generateFileName(),
+        Key: fileName,
         ContentType: type,
         ContentLength: size,
         ChecksumSHA256: checksum,
         Metadata: {
-            userId,
             x1,
             x2,
             portraitWidth

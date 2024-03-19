@@ -34,6 +34,8 @@ export default async function sendImage(file: File, x1: string, x2: string, port
         throw (new Error(signedURLResult.failure))
     }
     const url = signedURLResult.success.url
+
+    console.log(url)
     const result = await fetch(url, {
         method: "PUT",
         body: file,
