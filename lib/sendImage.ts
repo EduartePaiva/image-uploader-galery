@@ -34,8 +34,11 @@ export default async function sendImage(file: File, x1: string, x2: string, port
         throw (new Error(signedURLResult.failure))
     }
     const url = signedURLResult.success.url
+    const draftPostId = signedURLResult.success.postId
+
 
     console.log(url)
+    console.log(draftPostId)
     const result = await fetch(url, {
         method: "PUT",
         body: file,
@@ -49,5 +52,14 @@ export default async function sendImage(file: File, x1: string, x2: string, port
         const statusText = result.statusText
         throw (new Error(statusText))
     }
+
+    // now call the confirm upload action and await that
+
+    // the confirm upload will:
+    // 1: query the draftPostId
+    // 2: check if it's a draft
+    // 3: trigger the lambda rust function with the imageUrl to process it
+    // 4: after success turn to false the draft flag.
+    // 5: return success to client.
     //setStatusMessage
 }

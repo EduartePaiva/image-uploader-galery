@@ -3,6 +3,8 @@
 import { auth } from "@clerk/nextjs"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+import db from "@/db/drizzle"
+import { images } from "@/db/schema/images"
 
 import crypto from "crypto"
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
@@ -33,40 +35,51 @@ export default async function getSignedURL(
     x2: string,
     portraitWidth: string
 ) {
-    const { userId } = auth()
-    if (!userId) {
-        return { failure: "Not authenticated" }
-    }
-    if (!acceptedTypes.includes(type)) {
-        return { failure: "Invalid file type" }
-    }
-    if (size > maxFileSize) {
-        return { failure: "File too large" }
-
-    }
-
-    const fileName = generateFileName()
-    console.log(fileName)
-    //2726c7d9e13d3ae00103daae8a98f0e2c2b47ad7c0f28802127e1b6070a265af
-    //2726c7d9e13d3ae00103daae8a98f0e2c2b47ad7c0f28802127e1b6070a265af
-
-    const putObjectCommand = new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME!,
-        Key: fileName,
-        ContentType: type,
-        ContentLength: size,
-        ChecksumSHA256: checksum,
-        Metadata: {
-            x1,
-            x2,
-            portraitWidth
+    try {
+        const { userId } = auth()
+        if (!userId) {
+            return { failure: "Not authenticated" }
         }
-    })
-    // the metadata will be used to associate data with s3 later
+        if (!acceptedTypes.includes(type)) {
+            return { failure: "Invalid file type" }
+        }
+        if (size > maxFileSize) {
+            return { failure: "File too large" }
 
-    const signedURL = await getSignedUrl(s3, putObjectCommand, {
-        expiresIn: 60
-    })
+        }
 
-    return { success: { url: signedURL } }
+        const imageName = generateFileName()
+
+        const putObjectCommand = new PutObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME!,
+            Key: imageName,
+            ContentType: type,
+            ContentLength: size,
+            ChecksumSHA256: checksum,
+            Metadata: {
+                x1,
+                x2,
+                portraitWidth
+            }
+        })
+        // the metadata will be used to associate data with s3 later
+
+        const signedURL = await getSignedUrl(s3, putObjectCommand, {
+            expiresIn: 60
+        })
+
+        const postId = await db.insert(images).values({
+            imageURL: imageName,
+            userId,
+        }).returning({ postId: images.id }).then(val => val[0].postId)
+
+        if (!postId || postId === "") {
+            return { failure: "Error creating post draft" }
+        }
+
+
+        return { success: { url: signedURL, postId } }
+    } catch (err) {
+        return { failure: `${err}` }
+    }
 }
