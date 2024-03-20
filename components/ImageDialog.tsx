@@ -41,7 +41,6 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
         const moveX = (translateX > -maxMoveX && translateX < maxMoveX) ? translateX : (translateX < 0) ? -maxMoveX : maxMoveX
         const moveY = (translateY > -maxMoveY && translateY < maxMoveY) ? translateY : (translateY < 0) ? -maxMoveY : maxMoveY
         if (moveX != translateX || moveY != translateY) {
-            console.log('use effect')
             imgRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`
             setTranslateX(moveX)
             setTranslateY(moveY)
@@ -162,8 +161,6 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                             const newY1 = y1 < 0 ? "0" : Math.trunc(y1).toString()
                             const newPortraitWidth = Math.trunc(originPortraitB).toString()
                             const newPortraitHight = newPortraitWidth
-
-                            console.log(newX1, newY1, newPortraitWidth)
 
                             const toastId = toast.loading("Saving image...")
                             try {
