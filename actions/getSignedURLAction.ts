@@ -32,8 +32,9 @@ export default async function getSignedURL(
     size: number,
     checksum: string,
     x1: string,
-    x2: string,
-    portraitWidth: string
+    y1: string,
+    portraitWidth: string,
+    portraitHight: string
 ) {
     try {
         const { userId } = auth()
@@ -58,8 +59,9 @@ export default async function getSignedURL(
             ChecksumSHA256: checksum,
             Metadata: {
                 x1,
-                x2,
-                portraitWidth
+                y1,
+                portraitWidth,
+                portraitHight
             }
         })
         // the metadata will be used to associate data with s3 later

@@ -161,6 +161,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                             const newX1 = x1 < 0 ? "0" : Math.trunc(x1).toString()
                             const newY1 = y1 < 0 ? "0" : Math.trunc(y1).toString()
                             const newPortraitWidth = Math.trunc(originPortraitB).toString()
+                            const newPortraitHight = newPortraitWidth
 
                             console.log(newX1, newY1, newPortraitWidth)
 
@@ -171,7 +172,8 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                                     image_file,
                                     newX1,
                                     newY1,
-                                    newPortraitWidth
+                                    newPortraitWidth,
+                                    newPortraitHight
                                 )
                                 toast.success(<b>Image saved!</b>, {
                                     id: toastId

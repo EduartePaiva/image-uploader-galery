@@ -18,7 +18,13 @@ const computeSHA256 = async (file: File) => {
  * 
  * @throws {Error} When there's a error while uploading a file
  */
-export default async function sendImage(file: File, x1: string, x2: string, portraitWidth: string) {
+export default async function sendImage(
+    file: File,
+    x1: string,
+    y1: string,
+    portrait_width: string,
+    portrait_hight: string
+) {
     //statusmessage(uploading file)
     //setLoading(true)
     const checksum = await computeSHA256(file)
@@ -27,8 +33,9 @@ export default async function sendImage(file: File, x1: string, x2: string, port
         file.size,
         checksum,
         x1,
-        x2,
-        portraitWidth,
+        y1,
+        portrait_width,
+        portrait_hight,
     )
     if (signedURLResult.failure !== undefined) {
         throw (new Error(signedURLResult.failure))
