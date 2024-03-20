@@ -10,9 +10,10 @@ import crypto from "crypto"
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
 
 
-
+// only set endpoint for local s3
 const s3 = new S3Client({
     region: process.env.AWS_BUCKET_REGION!,
+    endpoint: "http://localhost:5000",
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY!,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
