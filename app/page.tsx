@@ -1,14 +1,12 @@
-import UploadImage from "@/components/UploadImage";
 import Header from "./Header";
 import Footer from "./Footer";
+import Main from "./Main";
 
 export default function Home() {
   return (
-    <div className="min-h-screen grid grid-rows-[50px_1fr_80px]">
+    <div className="min-h-screen grid grid-rows-[min-content_1fr_80px]">
       <Header />
-      <main className="">
-        <UploadImage />
-      </main>
+      <Main />
       <Footer />
     </div>
   );
