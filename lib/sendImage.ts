@@ -43,9 +43,6 @@ export default async function sendImage(
     const url = signedURLResult.success.url
     const draftPostId = signedURLResult.success.postId
 
-
-    console.log(url)
-    console.log(draftPostId)
     const result = await fetch(url, {
         method: "PUT",
         body: file,
@@ -59,6 +56,8 @@ export default async function sendImage(
         const statusText = result.statusText
         throw (new Error(statusText))
     }
+
+    return draftPostId
 
     // now call the confirm upload action and await that
 

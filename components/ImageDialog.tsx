@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { Slider } from "./ui/slider";
 import toast from "react-hot-toast";
 import sendImage from "@/lib/sendImage";
+import confirmImageUploaded from "@/actions/confirmImageUploaded";
 
 interface ImageDialogProps {
     open: boolean;
@@ -165,13 +166,24 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                             const toastId = toast.loading("Saving image...")
                             try {
                                 setSending(true)
-                                await sendImage(
+                                const draftPostId = await sendImage(
                                     image_file,
                                     newX1,
                                     newY1,
                                     newPortraitWidth,
                                     newPortraitHight
                                 )
+
+                                toast.loading("Processing image...", {
+                                    id: toastId
+                                }
+
+                                )
+                                const processImageResult = await confirmImageUploaded(draftPostId);
+                                if (processImageResult.failure) {
+                                    throw new Error("Error while processing image")
+                                }
+
                                 toast.success(<b>Image saved!</b>, {
                                     id: toastId
                                 })
