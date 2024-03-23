@@ -21,6 +21,7 @@ const s3 = new S3Client({
 
 const acceptedTypes = [
     "image/jpeg",
+    "image/jpg",
     "image/png",
     "image/webp"
 ]

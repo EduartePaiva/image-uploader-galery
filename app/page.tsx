@@ -1,20 +1,15 @@
-'use client'
-
-import triggerRustLambda from "@/actions/triggerRustLambda";
 import UploadImage from "@/components/UploadImage";
-import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
+import Header from "./Header";
+import Footer from "./Footer";
 
 export default function Home() {
   return (
-    <main className="">
-      <UserButton
-        afterSignOutUrl="/sign-in"
-        afterSwitchSessionUrl="/"
-      />
-      <UploadImage />
-
-      <Button onClick={() => triggerRustLambda("my image")}>trigger lambda</Button>
-    </main>
+    <div className="min-h-screen grid grid-rows-[50px_1fr_80px]">
+      <Header />
+      <main className="">
+        <UploadImage />
+      </main>
+      <Footer />
+    </div>
   );
 }
