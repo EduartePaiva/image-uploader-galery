@@ -58,14 +58,4 @@ export default async function sendImage(
     }
 
     return draftPostId
-
-    // now call the confirm upload action and await that
-
-    // the confirm upload will:
-    // 1: query the draftPostId
-    // 2: check if it's a draft
-    // 3: trigger the lambda rust function with the imageUrl to process it
-    // 4: after success turn to false the draft flag.
-    // 5: return success to client.
-    //setStatusMessage
 }

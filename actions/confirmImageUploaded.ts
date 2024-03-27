@@ -6,6 +6,7 @@ import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
 
 import { LambdaClient, InvokeCommand, InvokeCommandInput } from "@aws-sdk/client-lambda"; // ES Modules import
+import { revalidatePath } from "next/cache"
 const client = new LambdaClient({
     region: process.env.AWS_LAMBDA_REGION!,
     credentials: {
@@ -67,6 +68,8 @@ export default async function confirmImageUploaded(draftPostId: string) {
             eq(images.userId, userId),
             eq(images.id, draftPostId)
         ))
+
+        revalidatePath('/')
 
         return { success: '' }
     } catch {

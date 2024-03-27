@@ -4,6 +4,11 @@ import { ChangeEvent, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import ImageDialog from '@/components/ImageDialog';
 
+interface UploadImageProps {
+
+}
+
+
 export default function UploadImage() {
     const inputElem = useRef<null | HTMLInputElement>(null);
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
@@ -46,8 +51,9 @@ export default function UploadImage() {
             <Button
                 variant={'outline'}
                 onClick={buttonClick}
+                size={'default'}
             >
-                Select Image
+                Upload Image
             </Button>
             {imageUrl && imgFile && <ImageDialog
                 imageUrl={imageUrl}
