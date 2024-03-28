@@ -98,18 +98,29 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
             <DialogContent
                 onInteractOutside={(e) => e.preventDefault()}
                 className="
-                p-0
-                rounded-[5px,5px,0,0]
+                p-3
                 min-h-0
                 flex-[1,1,auto]
                 "
             >
-                <DialogTitle className="font-medium p-3">
+                <DialogTitle className="font-medium">
                     <div className="flex items-center gap-2">
                         <Crop /> <span>Crop Image</span>
                     </div>
                 </DialogTitle>
-                <div className="bg-gray-950 m-3 image-container">
+                <div className="
+                    bg-background
+                    flex
+                    items-center
+                    justify-center
+                    relative
+                    overflow-hidden
+                    min-h-[300px]
+                    h-[400px]
+                    max-h-[500px]
+                    rounded-sm
+
+                ">
                     {/* Image goes here */}
                     <img
                         draggable={false}
@@ -126,7 +137,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                         ref={imgRef}
                     />
                     <div
-                        className="overlay"
+                        className="overlay absolute box-border pointer-events-none border border-white opacity-100 shadow-[rgba(0,0,0,0.8)0_0_0_9999px]"
                         style={{
                             height: portraitBoundary,
                             width: portraitBoundary,
@@ -134,15 +145,15 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                         }}
                     ></div>
                 </div>
-                <div className="mx-3 flex items-center gap-2 px-4">
+                <div className="mx-6 flex items-center gap-2">
                     <Image size={30} /><Slider onValueChange={(value) => setImgZoomIn(1 + (value[0] / 100))} /><Image size={40} />
                 </div>
 
-                <div className={cn("bg-gray-100 p-3 flex justify-end")}>
+                <div className={cn("flex justify-end")}>
                     {/* Buttons goes here */}
                     <DialogClose asChild><Button className="text-muted-foreground font-normal" variant={"link"}>Cancel</Button></DialogClose>
                     <Button
-                        variant={"default"}
+
                         className="rounded-sm"
                         disabled={sending}
                         onClick={async () => {

@@ -13,7 +13,7 @@ export default function TooltipWrapper({ children, tooltipMessage }: TooltipWrap
                     {children}
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p className="z-10">{tooltipMessage}</p>
+                    <p>{tooltipMessage}</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

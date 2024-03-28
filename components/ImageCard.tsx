@@ -12,7 +12,7 @@ interface ImageCardProps {
 
 export default function ImageCard({ src, className }: ImageCardProps) {
     return (
-        <div className={"rounded-md shadow-md transition hover:scale-110"}>
+        <div className={"rounded-md shadow-md transition hover:scale-110 bg-secondary"}>
             <Image
                 className="rounded-t-md"
                 width={400}
