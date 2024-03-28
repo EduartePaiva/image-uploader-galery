@@ -16,7 +16,6 @@
     "@aws-sdk/client-s3": "^3.535.0",
     "@aws-sdk/s3-request-presigner": "^3.535.0",
     "@clerk/nextjs": "^4.29.9",
-    "@clerk/themes": "^1.7.10",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-slider": "^1.1.2",
