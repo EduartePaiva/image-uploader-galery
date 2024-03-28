@@ -3,6 +3,7 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import ImageDialog from '@/components/ImageDialog';
+import { ImagePlus, ImageUp } from 'lucide-react';
 
 interface UploadImageProps {
 
@@ -51,9 +52,10 @@ export default function UploadImage() {
             <Button
                 variant={'outline'}
                 onClick={buttonClick}
-                size={'default'}
+                size={'lg'}
+                className='flex gap-4'
             >
-                Upload Image
+                <ImagePlus /><span className='text-lg'>Add Image</span>
             </Button>
             {imageUrl && imgFile && <ImageDialog
                 imageUrl={imageUrl}

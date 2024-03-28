@@ -12,6 +12,7 @@ import { Slider } from "./ui/slider";
 import toast from "react-hot-toast";
 import sendImage from "@/lib/sendImage";
 import confirmImageUploaded from "@/actions/confirmImageUploaded";
+import { Crop, Image, ZoomIn, ZoomOut } from "lucide-react";
 
 interface ImageDialogProps {
     open: boolean;
@@ -100,10 +101,14 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                 p-0
                 rounded-[5px,5px,0,0]
                 min-h-0
-                flex-[1,1,auto]"
-
+                flex-[1,1,auto]
+                "
             >
-                <DialogTitle className="font-medium p-3">Edit image</DialogTitle>
+                <DialogTitle className="font-medium p-3">
+                    <div className="flex items-center gap-2">
+                        <Crop /> <span>Crop Image</span>
+                    </div>
+                </DialogTitle>
                 <div className="bg-gray-950 m-3 image-container">
                     {/* Image goes here */}
                     <img
@@ -129,8 +134,8 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                         }}
                     ></div>
                 </div>
-                <div className="mx-3">
-                    <Slider onValueChange={(value) => setImgZoomIn(1 + (value[0] / 100))} />
+                <div className="mx-3 flex items-center gap-2 px-4">
+                    <Image size={30} /><Slider onValueChange={(value) => setImgZoomIn(1 + (value[0] / 100))} /><Image size={40} />
                 </div>
 
                 <div className={cn("bg-gray-100 p-3 flex justify-end")}>

@@ -13,7 +13,7 @@ export default async function Main() {
     }
 
     return (
-        <main className="container mx-auto flex items-start flex-col gap-10 justify-center">
+        <main className="container mx-auto flex items-start flex-col gap-6 justify-center">
             <UploadImage />
             <div className="w-full grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] justify-items-center gap-x-7 gap-y-12">
                 {generateImages()}
