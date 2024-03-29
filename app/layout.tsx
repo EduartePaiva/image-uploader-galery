@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={cn("min-h-screen bg-background font-sans antialiased", inter.className)}>
           <ThemeProvider
             attribute="class"
@@ -31,8 +31,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster />
           </ThemeProvider>
-          <Toaster />
         </body>
       </html>
     </ClerkProvider>

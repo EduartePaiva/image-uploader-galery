@@ -6,7 +6,7 @@ import { images } from "@/db/schema/images"
 import { and, desc, eq } from "drizzle-orm"
 
 
-export async function getImagesUrlAction() {
+export async function getImagesDataAction() {
     try {
         const { userId } = auth()
 
@@ -14,8 +14,9 @@ export async function getImagesUrlAction() {
             return { failure: "User not authenticated" }
         }
 
-        const imagesUrl = await db.select({
-            imageURL: images.imageURL
+        const imagesData = await db.select({
+            imageURL: images.imageURL,
+            imageId: images.id
         })
             .from(images)
             .where(
@@ -26,12 +27,12 @@ export async function getImagesUrlAction() {
             ).orderBy(desc(images.createdAt))
         const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
 
-        const newImagesUrl = imagesUrl.map(imageURL => {
-            const urlKey = imageURL.imageURL
-            return `https://${bucketName}.s3.sa-east-1.amazonaws.com/${urlKey}`
+        imagesData.forEach(imageData => {
+            const urlKey = imageData.imageURL
+            imageData.imageURL = `https://${bucketName}.s3.sa-east-1.amazonaws.com/${urlKey}`
         })
 
-        return { success: newImagesUrl }
+        return { success: imagesData }
 
     } catch (err) {
         return { failure: "Something has throw" }

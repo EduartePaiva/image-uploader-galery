@@ -1,15 +1,23 @@
-import { getImagesUrlAction } from "@/actions/getImages";
+import { getImagesDataAction } from "@/actions/getImages";
 import ImageCard from "@/components/ImageCard";
 import UploadImage from "@/components/UploadImage";
 
 export default async function Main() {
-    const imageUrl = await getImagesUrlAction()
+    const imagesData = await getImagesDataAction()
 
     function generateImages() {
-        if (imageUrl.failure !== undefined) {
+        if (imagesData.failure !== undefined) {
+            console.log("Failed to get ImagesData")
             return null
         }
-        return imageUrl.success.map((url, index) => <ImageCard className="rounded-md shadow-md transition hover:scale-110" src={url} key={index} />)
+        return imagesData.success
+            .map((imageData, index) =>
+                <ImageCard
+                    src={imageData.imageURL}
+                    imageId={imageData.imageId}
+                    key={index}
+                />
+            )
     }
 
     return (

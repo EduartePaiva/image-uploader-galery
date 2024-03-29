@@ -2,15 +2,24 @@
 
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { Download, ImageDown, Trash2 } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 import TooltipWrapper from "./TooltipWrapper";
+import { deleteImageAction } from "@/actions/deleteImage";
+import { AlertDialogConfirm } from "./AlertDialogConfirm";
+import { useState } from "react";
 
 interface ImageCardProps {
     src: string,
-    className?: string
+    imageId: string;
 }
 
-export default function ImageCard({ src, className }: ImageCardProps) {
+export default function ImageCard({ src, imageId }: ImageCardProps) {
+    const [confirmDelete, setConfirmDelete] = useState(false)
+
+    const deleteClick = () => {
+        setConfirmDelete(true)
+    }
+
     return (
         <div className={"rounded-md shadow-md transition hover:scale-110 bg-secondary"}>
             <Image
@@ -24,11 +33,21 @@ export default function ImageCard({ src, className }: ImageCardProps) {
             />
             <div className="flex gap-2 p-1 justify-end">
                 <TooltipWrapper tooltipMessage="Download Image">
-                    <Button variant={"ghost"} size={"icon"}><Download /></Button>
+                    <Button variant={"ghost"} size={"icon"}>
+                        <Download />
+                    </Button>
                 </TooltipWrapper>
                 <TooltipWrapper tooltipMessage="Delete Image">
-                    <Button variant={"ghost"} size={"icon"}><Trash2 /></Button>
+                    <Button onClick={deleteClick} variant={"ghost"} size={"icon"}><Trash2 /></Button>
                 </TooltipWrapper>
+                <AlertDialogConfirm
+                    onOpenChange={setConfirmDelete}
+                    open={confirmDelete}
+                    onConfirm={async () => {
+                        const result = await deleteImageAction(imageId)
+                        console.log(result)
+                    }}
+                />
             </div>
         </div>
     )
