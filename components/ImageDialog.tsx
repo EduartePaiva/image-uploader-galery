@@ -6,13 +6,12 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button"
-import "@/components/imageDialog.css"
 import { useEffect, useRef, useState } from "react";
 import { Slider } from "./ui/slider";
 import toast from "react-hot-toast";
 import sendImage from "@/lib/sendImage";
 import confirmImageUploaded from "@/actions/confirmImageUploaded";
-import { Crop, Image, ZoomIn, ZoomOut } from "lucide-react";
+import { Crop, Image } from "lucide-react";
 
 interface ImageDialogProps {
     open: boolean;
