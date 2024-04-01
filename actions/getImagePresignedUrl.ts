@@ -42,7 +42,13 @@ export async function getImagePresignedUrlAction(imageId: string): getImagePresi
         if (imageURL.length == 0) return { failure: "Db query with length 0 shouldn't happen" }
         const imageKey = imageURL[0].imageKey
 
-        return { success: "ImageId" }
+        const command = new GetObjectCommand({
+            Bucket: process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!,
+            Key: imageKey
+        })
+        const url = await getSignedUrl(s3, command, { expiresIn: 60 })
+
+        return { success: url }
     } catch {
         return { failure: "Could not get image url" }
     }

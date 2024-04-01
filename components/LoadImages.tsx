@@ -6,6 +6,7 @@ import ImageCard from "./ImageCard";
 import { useState } from "react";
 import { deleteImageAction } from "@/actions/deleteImage";
 import { useRouter } from "next/navigation";
+import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl";
 
 interface LoadImagesProps {
     images: {
@@ -16,6 +17,13 @@ interface LoadImagesProps {
 
 async function downloadClick(imageId: string) {
     console.log("Downloading image:" + imageId)
+    const toastId = toast.loading('Downloading...');
+    const response = await getImagePresignedUrlAction(imageId)
+    if (response.success !== undefined) {
+        //do the stuff to download the image on the  page
+    } else {
+        toast.error(response.failure, { id: toastId })
+    }
 
 }
 
