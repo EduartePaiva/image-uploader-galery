@@ -44,7 +44,8 @@ export async function getImagePresignedUrlAction(imageId: string): getImagePresi
 
         const command = new GetObjectCommand({
             Bucket: process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!,
-            Key: imageKey
+            Key: imageKey,
+            ResponseContentDisposition: `attachment; filename="image.jpg"`
         })
         const url = await getSignedUrl(s3, command, { expiresIn: 60 })
 

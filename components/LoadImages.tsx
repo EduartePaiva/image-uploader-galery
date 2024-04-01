@@ -3,7 +3,7 @@
 import toast from "react-hot-toast";
 import { AlertDialogConfirm } from "./AlertDialogConfirm";
 import ImageCard from "./ImageCard";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { deleteImageAction } from "@/actions/deleteImage";
 import { useRouter } from "next/navigation";
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl";
@@ -21,6 +21,13 @@ async function downloadClick(imageId: string) {
     const response = await getImagePresignedUrlAction(imageId)
     if (response.success !== undefined) {
         //do the stuff to download the image on the  page
+        const anchorElement = document.createElement('a');
+        anchorElement.href = response.success
+        anchorElement.download = "image.jpg"
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
+        document.body.removeChild(anchorElement);
+        toast.success("Image downloaded!", { id: toastId })
     } else {
         toast.error(response.failure, { id: toastId })
     }
@@ -39,6 +46,7 @@ export default function LoadImages({ images }: LoadImagesProps) {
 
     return (
         <>
+            <a href="/pudding.jpg" download="test">Download pudding</a>
             <AlertDialogConfirm
                 onOpenChange={setConfirmDelete}
                 open={confirmDelete}
