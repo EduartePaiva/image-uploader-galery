@@ -5,8 +5,8 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
-
 import crypto from "crypto"
+import { clerkClient } from "@clerk/nextjs";
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
 
 
@@ -44,6 +44,24 @@ export default async function getSignedURL(
         if (!userId) {
             return { failure: "Not authenticated" }
         }
+
+        //validate the user plan 
+        const user = await clerkClient.users.getUser(userId)
+        let { user_images_count, user_plan } = user.publicMetadata
+        if (user_plan === undefined) user_plan = "free"
+        if (user_images_count === undefined) user_images_count = 0
+
+        if (user_plan === "free" && user_images_count >= 100) {
+            return { failure: "User already have 100 images" }
+        }
+
+        const clerkPromise = clerkClient.users.updateUserMetadata(userId, {
+            publicMetadata: {
+                user_plan,
+                user_images_count: user_images_count + 1
+            }
+        })
+
         if (!acceptedTypes.includes(type)) {
             return { failure: "Invalid file type" }
         }
