@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
 import toast from "react-hot-toast";
 import { AlertDialogConfirm } from "./AlertDialogConfirm";
 import ImageCard from "./ImageCard";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { deleteImageAction } from "@/actions/deleteImage";
 import { useRouter } from "next/navigation";
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl";

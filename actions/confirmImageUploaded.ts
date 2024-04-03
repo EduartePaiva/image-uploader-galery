@@ -41,7 +41,7 @@ export default async function confirmImageUploaded(draftPostId: string) {
         if (user_plan === undefined) user_plan = "free"
         if (user_images_count === undefined) user_images_count = 0
 
-        if (dbResult.length == 0) {
+        if (dbResult.length === 0) {
             return { failure: "Invalid draftPostId" }
         }
 
@@ -85,8 +85,8 @@ export default async function confirmImageUploaded(draftPostId: string) {
             eq(images.userId, userId),
             eq(images.id, draftPostId)
         ))
-
         await clerkUpdatePromise
+
         revalidatePath('/')
 
         return { success: '' }

@@ -39,7 +39,7 @@ export async function getImagePresignedUrlAction(imageId: string): getImagePresi
                 eq(images.id, imageId),
                 eq(images.userId, userId)
             ))
-        if (imageURL.length == 0) return { failure: "Db query with length 0 shouldn't happen" }
+        if (imageURL.length === 0) return { failure: "Db query with length 0 shouldn't happen" }
         const imageKey = imageURL[0].imageKey
 
         const command = new GetObjectCommand({

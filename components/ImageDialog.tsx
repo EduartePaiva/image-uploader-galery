@@ -11,7 +11,7 @@ import { Slider } from "./ui/slider";
 import toast from "react-hot-toast";
 import sendImage from "@/lib/sendImage";
 import confirmImageUploaded from "@/actions/confirmImageUploaded";
-import { Crop, Image } from "lucide-react";
+import { Crop, Image as LucidImage } from "lucide-react";
 
 interface ImageDialogProps {
     open: boolean;
@@ -36,17 +36,20 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
 
     const [sending, setSending] = useState(false)
 
-
-    useEffect(() => {
+    const handleImgZoomIn = (value: number[]) => {
         if (imgRef.current == null) return
-        const moveX = (translateX > -maxMoveX && translateX < maxMoveX) ? translateX : (translateX < 0) ? -maxMoveX : maxMoveX
-        const moveY = (translateY > -maxMoveY && translateY < maxMoveY) ? translateY : (translateY < 0) ? -maxMoveY : maxMoveY
+        const newZoomInValue = 1 + (value[0] / 100)
+        const newMaxMoveX = (widthCalc * newZoomInValue - portraitBoundary) / 2
+        const newMaxMoveY = (400 * newZoomInValue - portraitBoundary) / 2
+        const moveX = (translateX > -newMaxMoveX && translateX < newMaxMoveX) ? translateX : (translateX < 0) ? -newMaxMoveX : newMaxMoveX
+        const moveY = (translateY > -newMaxMoveY && translateY < newMaxMoveY) ? translateY : (translateY < 0) ? -newMaxMoveY : newMaxMoveY
         if (moveX != translateX || moveY != translateY) {
             imgRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`
             setTranslateX(moveX)
             setTranslateY(moveY)
         }
-    }, [imgZoomIn])
+        setImgZoomIn(newZoomInValue)
+    }
 
 
     const onMouseDown = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
@@ -121,6 +124,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
 
                 ">
                     {/* Image goes here */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                         draggable={false}
                         style={{
@@ -145,7 +149,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                     ></div>
                 </div>
                 <div className="mx-6 flex items-center gap-2">
-                    <Image size={30} /><Slider onValueChange={(value) => setImgZoomIn(1 + (value[0] / 100))} /><Image size={40} />
+                    <LucidImage size={30} /><Slider onValueChange={handleImgZoomIn} /><LucidImage size={40} />
                 </div>
 
                 <div className={cn("flex justify-end")}>
