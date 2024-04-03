@@ -1,6 +1,6 @@
 'use server'
 
-import { auth } from "@clerk/nextjs"
+import { auth, clerkClient } from "@clerk/nextjs"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
@@ -25,28 +25,38 @@ export default async function confirmImageUploaded(draftPostId: string) {
         }
 
         // get imageUrl
-        const result = await db.select({
+        const dbResultPromise = db.select({
             draft: images.draft,
             imageURL: images.imageURL
         }).from(images).where(and(
             eq(images.userId, userId),
             eq(images.id, draftPostId)
         ))
+        const userPromise =  clerkClient.users.getUser(userId)
 
-        if (result.length == 0) {
+        // await both results
+        const [user, dbResult] = await Promise.all([userPromise,dbResultPromise])
+
+        let { user_images_count, user_plan } = user.publicMetadata
+        if (user_plan === undefined) user_plan = "free"
+        if (user_images_count === undefined) user_images_count = 0
+
+        if (dbResult.length == 0) {
             return { failure: "Invalid draftPostId" }
         }
 
-        if (!result[0].draft) {
+        if (!dbResult[0].draft) {
             return { failure: "draftPostId is not a draft anymore" }
         }
+
+        
 
         // now activate lambda function.
 
         const input: InvokeCommandInput = { // InvocationRequest
             FunctionName: process.env.AWS_LAMBDA_NAME!, // required
             InvocationType: "RequestResponse",
-            Payload: Buffer.from(JSON.stringify({ image_name: result[0].imageURL }))// e.g. Buffer.from("") or new TextEncoder().encode("")
+            Payload: Buffer.from(JSON.stringify({ image_name: dbResult[0].imageURL }))// e.g. Buffer.from("") or new TextEncoder().encode("")
         };
         const command = new InvokeCommand(input);
         const response = await client.send(command);
@@ -60,8 +70,15 @@ export default async function confirmImageUploaded(draftPostId: string) {
             return { failure: "Error while processing the image" }
         }
 
-        // update image status to true
 
+        // update clerk image count
+        const clerkUpdatePromise = clerkClient.users.updateUserMetadata(userId, {
+            publicMetadata: {
+                user_plan,
+                user_images_count: user_images_count+1
+            }
+        })
+        // update image status to true
         await db.update(images).set({
             draft: false
         }).where(and(
@@ -69,6 +86,7 @@ export default async function confirmImageUploaded(draftPostId: string) {
             eq(images.id, draftPostId)
         ))
 
+        await clerkUpdatePromise
         revalidatePath('/')
 
         return { success: '' }

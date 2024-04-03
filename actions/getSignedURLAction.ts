@@ -9,8 +9,6 @@ import crypto from "crypto"
 import { clerkClient } from "@clerk/nextjs";
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
 
-
-
 const s3 = new S3Client({
     region: process.env.AWS_BUCKET_REGION!,
     credentials: {
@@ -18,8 +16,6 @@ const s3 = new S3Client({
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
     }
 })
-
-
 
 const acceptedTypes = [
     "image/jpeg",
@@ -50,28 +46,20 @@ export default async function getSignedURL(
         let { user_images_count, user_plan } = user.publicMetadata
         if (user_plan === undefined) user_plan = "free"
         if (user_images_count === undefined) user_images_count = 0
-
         if (user_plan === "free" && user_images_count >= 100) {
             return { failure: "User already have 100 images" }
         }
-
-        const clerkPromise = clerkClient.users.updateUserMetadata(userId, {
-            publicMetadata: {
-                user_plan,
-                user_images_count: user_images_count + 1
-            }
-        })
-
+        
         if (!acceptedTypes.includes(type)) {
             return { failure: "Invalid file type" }
         }
         if (size > maxFileSize) {
             return { failure: "File too large" }
-
+            
         }
-
+        
         const imageName = generateFileName()
-
+        
         const putObjectCommand = new PutObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME!,
             Key: imageName,
@@ -86,21 +74,22 @@ export default async function getSignedURL(
             }
         })
         // the metadata will be used to associate data with s3 later
-
-        const signedURL = await getSignedUrl(s3, putObjectCommand, {
+        const signedURLPromise = getSignedUrl(s3, putObjectCommand, {
             expiresIn: 60
         })
 
-        const postId = await db.insert(images).values({
+        const postIdPromise = db.insert(images).values({
             imageURL: imageName,
             userId,
         }).returning({ postId: images.id }).then(val => val[0].postId)
+
+        const [signedURL, postId] = await Promise.all([signedURLPromise,postIdPromise])
 
         if (!postId || postId === "") {
             return { failure: "Error creating post draft" }
         }
 
-
+        //await clerk finish the starting job
         return { success: { url: signedURL, postId } }
     } catch (err) {
         return { failure: `${err}` }

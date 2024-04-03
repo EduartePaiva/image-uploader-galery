@@ -6,7 +6,7 @@ import UploadImage from "@/components/UploadImage";
 export default async function Main() {
     const imagesData = await getImagesDataAction()
     if (!(imagesData.success !== undefined && imagesData.success.length > 0))
-        return <h1>Seems like you don't have any image.</h1>
+        return <h1>Seems like you don&apos;t have any image.</h1>
 
     return (
         <main className="container mx-auto flex items-start flex-col gap-6 justify-center">
