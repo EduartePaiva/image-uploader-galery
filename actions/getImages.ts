@@ -35,6 +35,7 @@ export async function getImagesDataAction() {
         return { success: imagesData }
 
     } catch (err) {
+        console.log("Error while getting images")
         return { failure: "Something has throw" }
     }
 }
