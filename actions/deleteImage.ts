@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
+import { clerkClient } from "@clerk/nextjs";
 
 // AWS IMPORTS
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3"
@@ -22,6 +23,7 @@ export async function deleteImageAction(imageId: string) {
         if (!userId) return { failure: "User not authenticated" }
 
 
+        const userPromise = clerkClient.users.getUser(userId)
         const imageKey = await db.delete(images)
             .where(
                 and(
@@ -38,6 +40,20 @@ export async function deleteImageAction(imageId: string) {
             Key: imageKey[0].imageKey,
         })
         const delObjResponse = await s3.send(command)
+
+        const user = await userPromise
+        const {user_images_count, user_plan} = user.publicMetadata
+        if (user_images_count !== undefined && user_plan !== undefined){
+            clerkClient.users.updateUserMetadata(userId, {
+                publicMetadata: {
+                    user_plan,
+                    user_images_count: user_images_count > 0 ? user_images_count-1 : 0
+                }
+            })
+        }else{
+            console.error("This should never happen because if one image is uploaded then these variables are always not undefined")
+        }
+
         if (
             delObjResponse.$metadata.httpStatusCode &&
             delObjResponse.$metadata.httpStatusCode >= 200 &&

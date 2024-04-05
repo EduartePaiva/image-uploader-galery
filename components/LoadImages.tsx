@@ -7,6 +7,7 @@ import { useState } from "react";
 import { deleteImageAction } from "@/actions/deleteImage";
 import { useRouter } from "next/navigation";
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl";
+import { useUser } from "@clerk/nextjs";
 
 interface LoadImagesProps {
     images: {
@@ -38,6 +39,7 @@ export default function LoadImages({ images }: LoadImagesProps) {
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [currentImageClick, setCurrentImageClick] = useState("")
     const router = useRouter()
+    const { user } = useUser();
 
     function deleteClick(imageId: string) {
         setCurrentImageClick(imageId)
@@ -46,7 +48,6 @@ export default function LoadImages({ images }: LoadImagesProps) {
 
     return (
         <>
-            <a href="/pudding.jpg" download="test">Download pudding</a>
             <AlertDialogConfirm
                 onOpenChange={setConfirmDelete}
                 open={confirmDelete}
@@ -56,6 +57,7 @@ export default function LoadImages({ images }: LoadImagesProps) {
                     if (result.success !== undefined) {
                         toast.success("Image deleted!", { id: toastId })
                         router.refresh()
+                        user?.reload()
                     } else {
                         toast.error("Could not delete image!", { id: toastId })
                     }

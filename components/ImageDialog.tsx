@@ -6,12 +6,13 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button"
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Slider } from "./ui/slider";
 import toast from "react-hot-toast";
 import sendImage from "@/lib/sendImage";
 import confirmImageUploaded from "@/actions/confirmImageUploaded";
 import { Crop, Image as LucidImage } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 interface ImageDialogProps {
     open: boolean;
@@ -26,6 +27,7 @@ interface ImageDialogProps {
 export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageWidth, image_file }: ImageDialogProps) {
     const imgRef = useRef<null | HTMLImageElement>(null);
     const [imgZoomIn, setImgZoomIn] = useState(1);
+    const { user } = useUser()
     const widthCalc = (imageWidth / imageHigh) * 400
     const portraitBoundary = widthCalc < 400 ? widthCalc : 400
     const maxMoveX = (widthCalc * imgZoomIn - portraitBoundary) / 2
@@ -207,6 +209,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                                     id: toastId
                                 })
                                 closeDialog()
+                                user?.reload()
                             } catch (err) {
                                 toast.error(<b>Could not save.</b>, {
                                     id: toastId
