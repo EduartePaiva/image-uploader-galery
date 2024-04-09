@@ -187,6 +187,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                             const toastId = toast.loading("Saving image...")
                             try {
                                 setSending(true)
+                                console.log('here 1')
                                 const draftPostId = await sendImage(
                                     image_file,
                                     newX1,
@@ -202,6 +203,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                                 )
                                 const processImageResult = await confirmImageUploaded(draftPostId);
                                 if (processImageResult.failure) {
+                                    console.error(processImageResult.failure)
                                     throw new Error("Error while processing image")
                                 }
 
@@ -211,6 +213,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                                 closeDialog()
                                 user?.reload()
                             } catch (err) {
+                                console.error(err)
                                 toast.error(<b>Could not save.</b>, {
                                     id: toastId
                                 })

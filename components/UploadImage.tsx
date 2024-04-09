@@ -3,11 +3,10 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import ImageDialog from '@/components/ImageDialog';
-import { ImagePlus, ImageUp } from 'lucide-react';
-
-interface UploadImageProps {
-
-}
+import { ImagePlus } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
+import toast from 'react-hot-toast';
+import { canUserUploadImage } from '@/utils/client_utils/checkIfUserCanUpload';
 
 
 export default function UploadImage() {
@@ -17,8 +16,13 @@ export default function UploadImage() {
     const [imgHigh, setImageHigh] = useState(0)
     const [imgFile, setImgFile] = useState<undefined | File>();
     const [openDialog, setOpenDialog] = useState(false)
+    const { user } = useUser();
 
     const buttonClick = () => {
+        if (!canUserUploadImage(user)) {
+            toast.error(<p className='text-center'>Your can&apos;t upload more images. Try deleting one image so you can upload more.</p>)
+            return
+        }
         if (inputElem.current == null) return
         inputElem.current.click()
     }

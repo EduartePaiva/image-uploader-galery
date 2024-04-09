@@ -91,6 +91,7 @@ export default async function confirmImageUploaded(draftPostId: string) {
 
         return { success: '' }
     } catch {
+        console.error("Error while processing image.")
         return { failure: "Error while processing image." }
     }
 }
