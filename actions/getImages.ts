@@ -3,10 +3,22 @@
 import { auth } from "@clerk/nextjs"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, gt } from "drizzle-orm"
+import type { ImageData } from '@/types/types.t'
+
+const PAGINATION_NUMBER = 10;
 
 
-export async function getImagesDataAction() {
+type getImageDataReturn = {
+    failure: string;
+    success?: undefined;
+} | {
+    success: ImageData[];
+    failure?: undefined;
+}
+
+
+export async function getImagesDataAction(cursor?:string): Promise<getImageDataReturn> {
     try {
         const { userId } = auth()
 
@@ -22,9 +34,12 @@ export async function getImagesDataAction() {
             .where(
                 and(
                     eq(images.userId, userId),
-                    eq(images.draft, false)
+                    eq(images.draft, false),
+                    cursor ? gt(images.id, cursor) : undefined
                 )
-            ).orderBy(desc(images.createdAt))
+            )
+            .limit(PAGINATION_NUMBER)
+            .orderBy(desc(images.createdAt))
         const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
 
         imagesData.forEach(imageData => {

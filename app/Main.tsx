@@ -4,7 +4,7 @@ import UploadImage from "@/components/UploadImage";
 
 
 export default async function Main() {
-    const imagesData = await getImagesDataAction()
+    const imagesData = await getImagesDataAction("ecf236cf-2d70-4bee-bf3c-200a8faf10fa")
     if (imagesData.success === undefined) {
         return (
             <main className="container">

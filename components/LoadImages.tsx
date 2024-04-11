@@ -8,12 +8,10 @@ import { deleteImageAction } from "@/actions/deleteImage";
 import { useRouter } from "next/navigation";
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl";
 import { useUser } from "@clerk/nextjs";
+import type { ImageData } from '@/types/types.t'
 
 interface LoadImagesProps {
-    images: {
-        imageURL: string;
-        imageId: string;
-    }[]
+    images: ImageData[]
 }
 
 async function downloadClick(imageId: string) {
