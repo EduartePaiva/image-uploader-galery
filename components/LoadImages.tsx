@@ -9,9 +9,10 @@ import { useRouter } from "next/navigation";
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl";
 import { useUser } from "@clerk/nextjs";
 import type { ImageData } from '@/types/types.t'
+import useInfiniteSchorl from "@/hooks/useInfiniteSchorl";
+import { Button } from "./ui/button";
 
 interface LoadImagesProps {
-    images: ImageData[]
 }
 
 async function downloadClick(imageId: string) {
@@ -33,11 +34,19 @@ async function downloadClick(imageId: string) {
 
 }
 
-export default function LoadImages({ images }: LoadImagesProps) {
+export default function LoadImages({ }: LoadImagesProps) {
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [currentImageClick, setCurrentImageClick] = useState("")
     const router = useRouter()
     const { user } = useUser();
+
+    const {
+        error,
+        hasNextPage,
+        images,
+        isFetching,
+        loadMoreImages
+    } = useInfiniteSchorl()
 
     function deleteClick(imageId: string) {
         setCurrentImageClick(imageId)
@@ -62,16 +71,30 @@ export default function LoadImages({ images }: LoadImagesProps) {
                     console.log(result)
                 }}
             />
-            <div className="w-full grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] justify-items-center gap-x-7 gap-y-12">
-                {images.map((image, index) =>
-                    <ImageCard
-                        key={index}
-                        deleteClick={deleteClick}
-                        downloadClick={downloadClick}
-                        imageId={image.imageId}
-                        src={image.imageURL}
-                    />)}
+            <div className="w-full grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] justify-items-center items-start gap-x-7 gap-y-12">
+                {images.length > 0 ?
+                    images.map((image, index) =>
+                        <ImageCard
+                            key={index}
+                            deleteClick={deleteClick}
+                            downloadClick={downloadClick}
+                            imageId={image.imageId}
+                            src={image.imageURL}
+                        />
+                    ) :
+                    <span className="justify-self-center text-lg font-semibold">
+                        Seems like it&apos;s your first upload, try uploading one image
+                    </span>
+                }
+
             </div>
+            <Button
+                disabled={(error !== undefined && !isFetching || !hasNextPage)}
+                className="w-fit"
+                onClick={loadMoreImages}
+            >
+                Load more
+            </Button>
         </>
     )
 }
