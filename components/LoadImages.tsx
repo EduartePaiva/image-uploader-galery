@@ -5,12 +5,11 @@ import { AlertDialogConfirm } from "./AlertDialogConfirm";
 import ImageCard from "./ImageCard";
 import { useState } from "react";
 import { deleteImageAction } from "@/actions/deleteImage";
-import { useRouter } from "next/navigation";
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl";
 import { useUser } from "@clerk/nextjs";
-import type { ImageData } from '@/types/types.t'
 import useInfiniteSchorl from "@/hooks/useInfiniteSchorl";
 import { Button } from "./ui/button";
+import { useImageStoreContext } from "@/context/image-store-context";
 
 interface LoadImagesProps {
 }
@@ -37,15 +36,14 @@ async function downloadClick(imageId: string) {
 export default function LoadImages({ }: LoadImagesProps) {
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [currentImageClick, setCurrentImageClick] = useState("")
-    const router = useRouter()
     const { user } = useUser();
+    const { images, removeOneImageFromImages } = useImageStoreContext()
 
     const {
         error,
         hasNextPage,
-        images,
         isFetching,
-        loadMoreImages
+        fetchMoreImages
     } = useInfiniteSchorl()
 
     function deleteClick(imageId: string) {
@@ -63,12 +61,11 @@ export default function LoadImages({ }: LoadImagesProps) {
                     const result = await deleteImageAction(currentImageClick)
                     if (result.success !== undefined) {
                         toast.success("Image deleted!", { id: toastId })
-                        router.refresh()
+                        removeOneImageFromImages(result.success.imageId)
                         user?.reload()
                     } else {
                         toast.error("Could not delete image!", { id: toastId })
                     }
-                    console.log(result)
                 }}
             />
             <div className="w-full grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] justify-items-center items-start gap-x-7 gap-y-12">
@@ -89,9 +86,9 @@ export default function LoadImages({ }: LoadImagesProps) {
 
             </div>
             <Button
-                disabled={(error !== undefined && !isFetching || !hasNextPage)}
+                disabled={(error !== undefined || isFetching || !hasNextPage)}
                 className="w-fit"
-                onClick={loadMoreImages}
+                onClick={fetchMoreImages}
             >
                 Load more
             </Button>

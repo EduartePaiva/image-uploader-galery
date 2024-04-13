@@ -6,7 +6,7 @@ import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
 
 import { LambdaClient, InvokeCommand, InvokeCommandInput } from "@aws-sdk/client-lambda"; // ES Modules import
-import { revalidatePath } from "next/cache"
+import { ImageData } from "@/types/types.t"
 const client = new LambdaClient({
     region: process.env.AWS_LAMBDA_REGION!,
     credentials: {
@@ -79,17 +79,23 @@ export default async function confirmImageUploaded(draftPostId: string) {
             }
         })
         // update image status to true
-        await db.update(images).set({
+        const image = await db.update(images).set({
             draft: false
         }).where(and(
             eq(images.userId, userId),
             eq(images.id, draftPostId)
         ))
+        .returning({imageId: images.id, createdAt: images.createdAt, imageURL: images.imageURL})
         await clerkUpdatePromise
 
-        revalidatePath('/')
+        const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
+        const imageReturn:ImageData = {
+            createdAt: image[0].createdAt.getTime(),
+            imageId: image[0].imageId,
+            imageURL: `https://${bucketName}.s3.sa-east-1.amazonaws.com/${image[0].imageURL}`
+        }
 
-        return { success: '' }
+        return { success: {message:"success processing image", image: imageReturn} }
     } catch {
         console.error("Error while processing image.")
         return { failure: "Error while processing image." }

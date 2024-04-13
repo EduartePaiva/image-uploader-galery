@@ -32,7 +32,8 @@ export async function deleteImageAction(imageId: string) {
                 )
             )
             .returning({
-                imageKey: images.imageURL
+                imageKey: images.imageURL,
+                imageId: images.id
             })
 
         const command = new DeleteObjectCommand({
@@ -58,7 +59,7 @@ export async function deleteImageAction(imageId: string) {
             delObjResponse.$metadata.httpStatusCode &&
             delObjResponse.$metadata.httpStatusCode >= 200 &&
             delObjResponse.$metadata.httpStatusCode < 300) {
-            return { success: "Image deleted" }
+            return { success: {message:"Image deleted", imageId:imageKey[0].imageId} }
         } else {
             return { failure: "Error deleting from s3" }
         }

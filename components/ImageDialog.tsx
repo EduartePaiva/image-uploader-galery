@@ -13,6 +13,7 @@ import sendImage from "@/lib/sendImage";
 import confirmImageUploaded from "@/actions/confirmImageUploaded";
 import { Crop, Image as LucidImage } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { useImageStoreContext } from "@/context/image-store-context";
 
 interface ImageDialogProps {
     open: boolean;
@@ -35,6 +36,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
     const maxMoveY = (400 * imgZoomIn - portraitBoundary) / 2
     const [translateX, setTranslateX] = useState(0)
     const [translateY, setTranslateY] = useState(0)
+    const { addOneImageToTheStart } = useImageStoreContext()
 
     const [sending, setSending] = useState(false)
 
@@ -202,7 +204,7 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
 
                                 )
                                 const processImageResult = await confirmImageUploaded(draftPostId);
-                                if (processImageResult.failure) {
+                                if (processImageResult.failure !== undefined) {
                                     console.error(processImageResult.failure)
                                     throw new Error("Error while processing image")
                                 }
@@ -210,6 +212,8 @@ export default function ImageDialog({ open, imageUrl, setOpen, imageHigh, imageW
                                 toast.success(<b>Image saved!</b>, {
                                     id: toastId
                                 })
+
+                                addOneImageToTheStart(processImageResult.success.image)
                                 closeDialog()
                                 user?.reload()
                             } catch (err) {
