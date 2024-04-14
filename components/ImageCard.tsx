@@ -1,12 +1,12 @@
-import Image from "next/image";
-import { Button } from "./ui/button";
-import { Download, Trash2 } from "lucide-react";
-import TooltipWrapper from "./TooltipWrapper";
+import Image from "next/image"
+import { Button } from "./ui/button"
+import { Download, Trash2 } from "lucide-react"
+import TooltipWrapper from "./TooltipWrapper"
 interface ImageCardProps {
-    src: string,
-    imageId: string;
-    deleteClick: (imageId: string) => void;
-    downloadClick: (imageId: string) => Promise<void>;
+    src: string
+    imageId: string
+    deleteClick: (imageId: string) => void
+    downloadClick: (imageId: string) => Promise<void>
 }
 
 export default function ImageCard({ src, imageId, deleteClick, downloadClick }: ImageCardProps) {

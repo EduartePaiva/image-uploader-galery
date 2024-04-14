@@ -1,26 +1,30 @@
-'use client'
+"use client"
 
-import { ChangeEvent, useRef, useState } from 'react'
-import { Button } from '@/components/ui/button';
-import ImageDialog from '@/components/ImageDialog';
-import { ImagePlus } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
-import toast from 'react-hot-toast';
-import { canUserUploadImage } from '@/utils/client_utils/checkIfUserCanUpload';
-
+import { ChangeEvent, useRef, useState } from "react"
+import { Button } from "@/components/ui/button"
+import ImageDialog from "@/components/ImageDialog"
+import { ImagePlus } from "lucide-react"
+import { useUser } from "@clerk/nextjs"
+import toast from "react-hot-toast"
+import { canUserUploadImage } from "@/utils/client_utils/checkIfUserCanUpload"
 
 export default function UploadImage() {
-    const inputElem = useRef<null | HTMLInputElement>(null);
+    const inputElem = useRef<null | HTMLInputElement>(null)
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
     const [imgWidth, setImageWidth] = useState(0)
     const [imgHigh, setImageHigh] = useState(0)
-    const [imgFile, setImgFile] = useState<undefined | File>();
+    const [imgFile, setImgFile] = useState<undefined | File>()
     const [openDialog, setOpenDialog] = useState(false)
-    const { user } = useUser();
+    const { user } = useUser()
 
     const buttonClick = () => {
         if (!canUserUploadImage(user)) {
-            toast.error(<p className='text-center'>Your can&apos;t upload more images. Try deleting one image so you can upload more.</p>)
+            toast.error(
+                <p className="text-center">
+                    Your can&apos;t upload more images. Try deleting one image so you can upload
+                    more.
+                </p>,
+            )
             return
         }
         if (inputElem.current == null) return
@@ -48,27 +52,25 @@ export default function UploadImage() {
             <input
                 className="bg-transparent flex-1 border-none outline-none hidden"
                 type="file"
-                accept='image/jpeg,image/png,image/webp'
+                accept="image/jpeg,image/png,image/webp"
                 onChange={inputOnChange}
                 ref={inputElem}
-                onClick={(e) => e.currentTarget.value = ""}
+                onClick={(e) => (e.currentTarget.value = "")}
             />
-            <Button
-                variant={'outline'}
-                onClick={buttonClick}
-                size={'lg'}
-                className='flex gap-4'
-            >
-                <ImagePlus /><span className='text-lg'>Add Image</span>
+            <Button variant={"outline"} onClick={buttonClick} size={"lg"} className="flex gap-4">
+                <ImagePlus />
+                <span className="text-lg">Add Image</span>
             </Button>
-            {imageUrl && imgFile && <ImageDialog
-                imageUrl={imageUrl}
-                open={openDialog}
-                setOpen={setOpenDialog}
-                imageHigh={imgHigh}
-                imageWidth={imgWidth}
-                image_file={imgFile}
-            />}
+            {imageUrl && imgFile && (
+                <ImageDialog
+                    imageUrl={imageUrl}
+                    open={openDialog}
+                    setOpen={setOpenDialog}
+                    imageHigh={imgHigh}
+                    imageWidth={imgWidth}
+                    image_file={imgFile}
+                />
+            )}
         </div>
     )
 }

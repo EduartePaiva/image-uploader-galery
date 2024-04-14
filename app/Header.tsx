@@ -1,6 +1,6 @@
-import HowMuchImages from "@/components/HowMuchImages";
-import ShowUserButton from "@/components/ShowUserButton";
-import { ModeToggle } from "@/components/ThemeModeToggle";
+import HowMuchImages from "@/components/HowMuchImages"
+import ShowUserButton from "@/components/ShowUserButton"
+import { ModeToggle } from "@/components/ThemeModeToggle"
 
 export default function Header() {
     return (

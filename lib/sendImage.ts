@@ -1,21 +1,17 @@
-import getSignedURL from "@/actions/getSignedURLAction";
-
+import getSignedURL from "@/actions/getSignedURLAction"
 
 const computeSHA256 = async (file: File) => {
     const buffer = await file.arrayBuffer()
     const hashBuffer = await crypto.subtle.digest("SHA-256", buffer)
     const hashArray = Array.from(new Uint8Array(hashBuffer))
-    const hashHex = hashArray
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("")
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
     return hashHex
 }
 
-
 /**
  * This function can throw an error
- * @param file 
- * 
+ * @param file
+ *
  * @throws {Error} When there's a error while uploading a file
  */
 export default async function sendImage(
@@ -23,7 +19,7 @@ export default async function sendImage(
     x1: string,
     y1: string,
     portrait_width: string,
-    portrait_hight: string
+    portrait_hight: string,
 ) {
     //statusmessage(uploading file)
     //setLoading(true)
@@ -38,7 +34,7 @@ export default async function sendImage(
         portrait_hight,
     )
     if (signedURLResult.failure !== undefined) {
-        throw (new Error(signedURLResult.failure))
+        throw new Error(signedURLResult.failure)
     }
     const url = signedURLResult.success.url
     const draftPostId = signedURLResult.success.postId
@@ -47,14 +43,14 @@ export default async function sendImage(
         method: "PUT",
         body: file,
         headers: {
-            "Content-Type": file.type
-        }
+            "Content-Type": file.type,
+        },
     })
 
     const status = result.status
     if (status !== 200) {
         const statusText = result.statusText
-        throw (new Error(statusText))
+        throw new Error(statusText)
     }
 
     return draftPostId

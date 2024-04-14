@@ -6,9 +6,9 @@ const nextConfig = {
                 protocol: "https",
                 hostname: "image-galery-compressed-images.s3.sa-east-1.amazonaws.com",
                 pathname: "/**",
-            }
-        ]
-    }
-};
+            },
+        ],
+    },
+}
 
-export default nextConfig;
+export default nextConfig

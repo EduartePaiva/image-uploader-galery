@@ -14,18 +14,20 @@ const s3 = new S3Client({
     region: process.env.AWS_BUCKET_REGION!,
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
-    }
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
 })
 
-
-type getImagePresignedReturn = Promise<{
-    success?: undefined;
-    failure: string;
-} | {
-    success: string;
-    failure?: undefined
-}>
+type getImagePresignedReturn = Promise<
+    | {
+          success?: undefined
+          failure: string
+      }
+    | {
+          success: string
+          failure?: undefined
+      }
+>
 
 export async function getImagePresignedUrlAction(imageId: string): getImagePresignedReturn {
     try {
@@ -35,17 +37,14 @@ export async function getImagePresignedUrlAction(imageId: string): getImagePresi
         const imageURL = await db
             .select({ imageKey: images.imageURL })
             .from(images)
-            .where(and(
-                eq(images.id, imageId),
-                eq(images.userId, userId)
-            ))
+            .where(and(eq(images.id, imageId), eq(images.userId, userId)))
         if (imageURL.length === 0) return { failure: "Db query with length 0 shouldn't happen" }
         const imageKey = imageURL[0].imageKey
 
         const command = new GetObjectCommand({
             Bucket: process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!,
             Key: imageKey,
-            ResponseContentDisposition: `attachment; filename="image.jpg"`
+            ResponseContentDisposition: `attachment; filename="image.jpg"`,
         })
         const url = await getSignedUrl(s3, command, { expiresIn: 60 })
 

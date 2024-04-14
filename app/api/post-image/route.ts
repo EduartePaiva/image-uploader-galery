@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server"
-import fs from 'node:fs';
+import fs from "node:fs"
 
 export async function POST(request: Request) {
-    const file = (await request.formData()).get('file')
+    const file = (await request.formData()).get("file")
     console.log(file)
     console.log(typeof file)
-
 
     // fs.write(, buffer, err => {
     //     if (err) {
@@ -14,7 +13,6 @@ export async function POST(request: Request) {
     //         // file written successfully
     //     }
     // });
-
 
     return new NextResponse("recebido", { status: 201 })
 }

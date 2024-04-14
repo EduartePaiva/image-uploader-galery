@@ -7,13 +7,12 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react"
 
 interface AlertDialogConfirm {
-    onConfirm: () => void,
-    open: boolean;
+    onConfirm: () => void
+    open: boolean
     onOpenChange: Dispatch<SetStateAction<boolean>>
 }
 
@@ -24,8 +23,8 @@ export function AlertDialogConfirm({ onConfirm, open, onOpenChange }: AlertDialo
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your
-                        image and remove your data from our servers.
+                        This action cannot be undone. This will permanently delete your image and
+                        remove your data from our servers.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

@@ -1,7 +1,6 @@
-import LoadImages from "@/components/LoadImages";
-import UploadImage from "@/components/UploadImage";
-import ImageStoreContextProvider from "@/context/image-store-context";
-
+import LoadImages from "@/components/LoadImages"
+import UploadImage from "@/components/UploadImage"
+import ImageStoreContextProvider from "@/context/image-store-context"
 
 export default async function Main() {
     // const imagesData = await getImagesDataAction("ecf236cf-2d70-4bee-bf3c-200a8faf10fa")
