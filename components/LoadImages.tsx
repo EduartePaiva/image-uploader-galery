@@ -7,10 +7,10 @@ import { useCallback, useRef, useState } from "react"
 import { deleteImageAction } from "@/actions/deleteImage"
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl"
 import { useUser } from "@clerk/nextjs"
-import { Button } from "./ui/button"
 import { useImageStoreContext } from "@/context/image-store-context"
 import useInfiniteImagesSchorl from "@/hooks/useInfiniteImagesSchorl"
 import ImageCardSkeleton from "./ImageCardSkeleton"
+import useIntersectionObserver from "@/hooks/useIntersectionObserver"
 
 async function downloadClick(imageId: string) {
     console.log("Downloading image:" + imageId)
@@ -41,23 +41,33 @@ export default function LoadImages() {
         setCurrentImageClick(imageId)
         setConfirmDelete(true)
     }
+    const { elementRef } = useIntersectionObserver<HTMLDivElement>({
+        callback: fetchMoreImages,
+        hasNextPage,
+        isFetching,
+    })
 
-    const observer = useRef<IntersectionObserver | null>(null)
-    // observer logic
-    const lastElementRef = useCallback(
-        (node: HTMLButtonElement | null) => {
-            if (isFetching) return
-            if (observer.current !== null) observer.current.disconnect()
-
-            observer.current = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting && hasNextPage) {
-                    fetchMoreImages()
-                }
-            })
-            if (node !== null) observer.current.observe(node)
-        },
-        [isFetching, observer, fetchMoreImages, hasNextPage],
-    )
+    // // observer logic
+    // const observer = useRef<IntersectionObserver | null>(null)
+    // const lastElementRef = useCallback(
+    //     (node: HTMLDivElement | null) => {
+    //         if (node === null) return
+    //         if (isFetching) return
+    //         if (observer.current !== null) {
+    //             console.log("disconnecting observer", observer)
+    //             observer.current.disconnect()
+    //         }
+    //         console.log("creating observer")
+    //         observer.current = new IntersectionObserver((entries) => {
+    //             if (entries[0].isIntersecting && hasNextPage) {
+    //                 console.log("calling fetch more images")
+    //                 fetchMoreImages()
+    //             }
+    //         })
+    //         observer.current.observe(node)
+    //     },
+    //     [isFetching, observer, fetchMoreImages, hasNextPage],
+    // )
 
     return (
         <>
@@ -92,25 +102,12 @@ export default function LoadImages() {
                         Seems like it&apos;s your first upload, try uploading one image
                     </span>
                 )}
-                <ImageCardSkeleton />
-                <ImageCardSkeleton />
-                <ImageCardSkeleton />
-                <ImageCardSkeleton />
-                <ImageCardSkeleton />
-                <ImageCardSkeleton />
-                <ImageCardSkeleton />
-                <ImageCardSkeleton />
-                {hasNextPage && <ImageCardSkeleton />}
+                {hasNextPage && (
+                    <div ref={elementRef}>
+                        <ImageCardSkeleton />
+                    </div>
+                )}
             </div>
-
-            <Button
-                ref={lastElementRef}
-                disabled={error !== undefined || isFetching || !hasNextPage}
-                className={`w-fit ${!hasNextPage && "hidden"}`}
-                onClick={fetchMoreImages}
-            >
-                Loading more...
-            </Button>
         </>
     )
 }
