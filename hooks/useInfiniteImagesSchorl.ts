@@ -2,7 +2,7 @@ import { useState } from "react"
 import { getImagesDataAction } from "@/actions/getImages"
 import { useImageStoreContext } from "@/context/image-store-context"
 
-export default function useInfiniteSchorl() {
+export default function useInfiniteImagesSchorl() {
     const { images, appendImagesToTheEnd } = useImageStoreContext()
     const [isFetching, setIsFetching] = useState(false)
     const [hasNextPage, setHasNextPage] = useState(true)
@@ -10,9 +10,9 @@ export default function useInfiniteSchorl() {
 
     const fetchMoreImages = async () => {
         if (isFetching) return
-
         setIsFetching(true)
         const cursor = images.length > 0 ? images[images.length - 1].createdAt : undefined
+        
         const newImages = await getImagesDataAction(cursor)
         if (newImages.failure !== undefined) {
             setError(newImages.failure)

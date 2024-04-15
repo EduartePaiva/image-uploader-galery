@@ -3,15 +3,14 @@
 import toast from "react-hot-toast"
 import { AlertDialogConfirm } from "./AlertDialogConfirm"
 import ImageCard from "./ImageCard"
-import { useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { deleteImageAction } from "@/actions/deleteImage"
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl"
 import { useUser } from "@clerk/nextjs"
-import useInfiniteSchorl from "@/hooks/useInfiniteSchorl"
 import { Button } from "./ui/button"
 import { useImageStoreContext } from "@/context/image-store-context"
-
-interface LoadImagesProps {}
+import useInfiniteImagesSchorl from "@/hooks/useInfiniteImagesSchorl"
+import ImageCardSkeleton from "./ImageCardSkeleton"
 
 async function downloadClick(imageId: string) {
     console.log("Downloading image:" + imageId)
@@ -31,18 +30,34 @@ async function downloadClick(imageId: string) {
     }
 }
 
-export default function LoadImages({}: LoadImagesProps) {
+export default function LoadImages() {
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [currentImageClick, setCurrentImageClick] = useState("")
     const { user } = useUser()
     const { images, removeOneImageFromImages } = useImageStoreContext()
-
-    const { error, hasNextPage, isFetching, fetchMoreImages } = useInfiniteSchorl()
+    const { error, hasNextPage, isFetching, fetchMoreImages } = useInfiniteImagesSchorl()
 
     function deleteClick(imageId: string) {
         setCurrentImageClick(imageId)
         setConfirmDelete(true)
     }
+
+    const observer = useRef<IntersectionObserver | null>(null)
+    // observer logic
+    const lastElementRef = useCallback(
+        (node: HTMLButtonElement | null) => {
+            if (isFetching) return
+            if (observer.current !== null) observer.current.disconnect()
+
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && hasNextPage) {
+                    fetchMoreImages()
+                }
+            })
+            if (node !== null) observer.current.observe(node)
+        },
+        [isFetching, observer, fetchMoreImages, hasNextPage],
+    )
 
     return (
         <>
@@ -62,28 +77,39 @@ export default function LoadImages({}: LoadImagesProps) {
                 }}
             />
             <div className="w-full grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] justify-items-center items-start gap-x-7 gap-y-12">
-                {images.length > 0 ? (
-                    images.map((image, index) => (
-                        <ImageCard
-                            key={index}
-                            deleteClick={deleteClick}
-                            downloadClick={downloadClick}
-                            imageId={image.imageId}
-                            src={image.imageURL}
-                        />
-                    ))
-                ) : (
+                {images.map((image) => (
+                    <ImageCard
+                        key={image.imageId}
+                        deleteClick={deleteClick}
+                        downloadClick={downloadClick}
+                        imageId={image.imageId}
+                        src={image.imageURL}
+                    />
+                ))}
+
+                {images.length === 0 && !isFetching && !hasNextPage && (
                     <span className="justify-self-center text-lg font-semibold">
                         Seems like it&apos;s your first upload, try uploading one image
                     </span>
                 )}
+                <ImageCardSkeleton />
+                <ImageCardSkeleton />
+                <ImageCardSkeleton />
+                <ImageCardSkeleton />
+                <ImageCardSkeleton />
+                <ImageCardSkeleton />
+                <ImageCardSkeleton />
+                <ImageCardSkeleton />
+                {hasNextPage && <ImageCardSkeleton />}
             </div>
+
             <Button
+                ref={lastElementRef}
                 disabled={error !== undefined || isFetching || !hasNextPage}
-                className="w-fit"
+                className={`w-fit ${!hasNextPage && "hidden"}`}
                 onClick={fetchMoreImages}
             >
-                Load more
+                Loading more...
             </Button>
         </>
     )
