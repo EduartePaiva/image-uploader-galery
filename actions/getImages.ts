@@ -3,8 +3,20 @@
 import { auth } from "@clerk/nextjs"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
-import { and, asc, desc, eq, gt, lt } from "drizzle-orm"
+import { and, desc, eq, lt } from "drizzle-orm"
 import type { ImageData } from "@/types/types.t"
+
+//aws stuff
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+
+const s3 = new S3Client({
+    region: process.env.AWS_BUCKET_REGION!,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+})
 
 const PAGINATION_NUMBER = 10
 
@@ -44,18 +56,23 @@ export async function getImagesDataAction(cursor?: number): Promise<getImageData
             .orderBy(desc(images.createdAt))
         const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
 
-        // imagesData.map(imageData => ({
-        //     const urlKey = imageData.imageURL
-        //     const createdAt = imageData.createdAt.getTime()
-        //     imageData.imageURL: `https://${bucketName}.s3.sa-east-1.amazonaws.com/${urlKey}`
-        // }))
+        const presignedImagesData: ImageData[] = await Promise.all(
+            imagesData.map(async (imageData) => {
+                const command = new GetObjectCommand({
+                    Bucket: bucketName,
+                    Key: imageData.imageURL,
+                })
+                const url = await getSignedUrl(s3, command, { expiresIn: 300 })
+                return {
+                    createdAt: imageData.createdAt.getTime(),
+                    imageId: imageData.imageId,
+                    imageURL: url,
+                }
+            }),
+        )
 
         return {
-            success: imagesData.map((imageData) => ({
-                createdAt: imageData.createdAt.getTime(),
-                imageId: imageData.imageId,
-                imageURL: `https://${bucketName}.s3.sa-east-1.amazonaws.com/${imageData.imageURL}`,
-            })),
+            success: presignedImagesData,
         }
     } catch (err) {
         console.log("Error while getting images")

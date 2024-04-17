@@ -5,9 +5,22 @@ import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
 
+// s3 stuff
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+
+const s3 = new S3Client({
+    region: process.env.AWS_BUCKET_REGION!,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+})
+
+// lambda stuff
 import { LambdaClient, InvokeCommand, InvokeCommandInput } from "@aws-sdk/client-lambda" // ES Modules import
 import { ImageData } from "@/types/types.t"
-const client = new LambdaClient({
+const lambdaClient = new LambdaClient({
     region: process.env.AWS_LAMBDA_REGION!,
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY!,
@@ -49,7 +62,6 @@ export default async function confirmImageUploaded(draftPostId: string) {
         }
 
         // now activate lambda function.
-
         const input: InvokeCommandInput = {
             // InvocationRequest
             FunctionName: process.env.AWS_LAMBDA_NAME!, // required
@@ -57,7 +69,7 @@ export default async function confirmImageUploaded(draftPostId: string) {
             Payload: Buffer.from(JSON.stringify({ image_name: dbResult[0].imageURL })), // e.g. Buffer.from("") or new TextEncoder().encode("")
         }
         const command = new InvokeCommand(input)
-        const response = await client.send(command)
+        const response = await lambdaClient.send(command)
         if (response.StatusCode && response.StatusCode === 200 && response.Payload) {
             const body = Buffer.from(response.Payload).toString("utf8")
             const obj = JSON.parse(body)
@@ -67,6 +79,17 @@ export default async function confirmImageUploaded(draftPostId: string) {
         } else {
             return { failure: "Error while processing the image" }
         }
+
+        // get PresignedUrl from s3 now.
+        const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
+        const imagePresignedUrl = getSignedUrl(
+            s3,
+            new GetObjectCommand({
+                Bucket: bucketName,
+                Key: dbResult[0].imageURL,
+            }),
+            { expiresIn: 300 },
+        )
 
         // update clerk image count
         const clerkUpdatePromise = clerkClient.users.updateUserMetadata(userId, {
@@ -85,17 +108,16 @@ export default async function confirmImageUploaded(draftPostId: string) {
             .returning({
                 imageId: images.id,
                 createdAt: images.createdAt,
-                imageURL: images.imageURL,
             })
-        await clerkUpdatePromise
 
-        const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
         const imageReturn: ImageData = {
             createdAt: image[0].createdAt.getTime(),
             imageId: image[0].imageId,
-            imageURL: `https://${bucketName}.s3.sa-east-1.amazonaws.com/${image[0].imageURL}`,
+            imageURL: await imagePresignedUrl,
         }
 
+        // await clerk, it can be awaited last
+        await clerkUpdatePromise
         return { success: { message: "success processing image", image: imageReturn } }
     } catch {
         console.error("Error while processing image.")
