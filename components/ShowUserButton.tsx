@@ -7,7 +7,7 @@ export default function ShowUserButton() {
     return (
         <div className="w-8 h-8 rounded-full">
             {isLoaded ? (
-                <UserButton />
+                <UserButton afterSignOutUrl="/sign-in" />
             ) : (
                 <Skeleton className="w-full h-full rounded-full"></Skeleton>
             )}
