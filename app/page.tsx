@@ -1,6 +1,7 @@
 import Header from "./Header"
 import Footer from "./Footer"
 import Main from "./Main"
+import BackToTopButton from "@/components/BackToTopButton"
 
 export default function Home() {
     return (
@@ -8,6 +9,7 @@ export default function Home() {
             <Header />
             <Main />
             <Footer />
+            <BackToTopButton />
         </div>
     )
 }
