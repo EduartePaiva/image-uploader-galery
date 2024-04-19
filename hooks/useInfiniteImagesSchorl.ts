@@ -12,7 +12,7 @@ export default function useInfiniteImagesSchorl() {
         if (isFetching) return
         setIsFetching(true)
         const cursor = images.length > 0 ? images[images.length - 1].createdAt : undefined
-        
+
         const newImages = await getImagesDataAction(cursor)
         if (newImages.failure !== undefined) {
             setError(newImages.failure)
