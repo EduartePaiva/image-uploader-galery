@@ -11,10 +11,10 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 const s3 = new S3Client({
-    region: process.env.AWS_BUCKET_REGION!,
+    region: process.env.AWS_BUCKET_REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 })
 
@@ -54,7 +54,7 @@ export async function getImagesDataAction(cursor?: number): Promise<getImageData
             )
             .limit(PAGINATION_NUMBER)
             .orderBy(desc(images.createdAt))
-        const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
+        const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME
 
         const presignedImagesData: ImageData[] = await Promise.all(
             imagesData.map(async (imageData) => {

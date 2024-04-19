@@ -10,10 +10,10 @@ import { clerkClient } from "@clerk/nextjs"
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3"
 
 const s3 = new S3Client({
-    region: process.env.AWS_BUCKET_REGION!,
+    region: process.env.AWS_BUCKET_REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 })
 
@@ -32,7 +32,7 @@ export async function deleteImageAction(imageId: string) {
             })
 
         const command = new DeleteObjectCommand({
-            Bucket: process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!,
+            Bucket: process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME,
             Key: imageKey[0].imageKey,
         })
         const delObjResponse = await s3.send(command)

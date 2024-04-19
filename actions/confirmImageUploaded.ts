@@ -10,10 +10,10 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 const s3 = new S3Client({
-    region: process.env.AWS_BUCKET_REGION!,
+    region: process.env.AWS_BUCKET_REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 })
 
@@ -21,10 +21,10 @@ const s3 = new S3Client({
 import { LambdaClient, InvokeCommand, InvokeCommandInput } from "@aws-sdk/client-lambda" // ES Modules import
 import { ImageData } from "@/types/types.t"
 const lambdaClient = new LambdaClient({
-    region: process.env.AWS_LAMBDA_REGION!,
+    region: process.env.AWS_LAMBDA_REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 })
 
@@ -64,7 +64,7 @@ export default async function confirmImageUploaded(draftPostId: string) {
         // now activate lambda function.
         const input: InvokeCommandInput = {
             // InvocationRequest
-            FunctionName: process.env.AWS_LAMBDA_NAME!, // required
+            FunctionName: process.env.AWS_LAMBDA_NAME, // required
             InvocationType: "RequestResponse",
             Payload: Buffer.from(JSON.stringify({ image_name: dbResult[0].imageURL })), // e.g. Buffer.from("") or new TextEncoder().encode("")
         }
@@ -81,7 +81,7 @@ export default async function confirmImageUploaded(draftPostId: string) {
         }
 
         // get PresignedUrl from s3 now.
-        const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME!
+        const bucketName = process.env.AWS_PROCESSED_IMAGES_BUCKET_NAME
         const imagePresignedUrl = getSignedUrl(
             s3,
             new GetObjectCommand({

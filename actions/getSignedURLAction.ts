@@ -10,10 +10,10 @@ import { clerkClient } from "@clerk/nextjs"
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
 
 const s3 = new S3Client({
-    region: process.env.AWS_BUCKET_REGION!,
+    region: process.env.AWS_BUCKET_REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 })
 
@@ -55,7 +55,7 @@ export default async function getSignedURL(
         const imageName = generateFileName()
 
         const putObjectCommand = new PutObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME!,
+            Bucket: process.env.AWS_BUCKET_NAME,
             Key: imageName,
             ContentType: type,
             ContentLength: size,
