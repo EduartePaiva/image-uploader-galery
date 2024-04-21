@@ -75,7 +75,7 @@ export async function getImagesDataAction(cursor?: number): Promise<getImageData
             success: presignedImagesData,
         }
     } catch (err) {
-        console.log("Error while getting images")
+        console.error("Error while getting images")
         return { failure: "Something has throw" }
     }
 }

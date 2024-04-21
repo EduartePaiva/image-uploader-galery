@@ -206,7 +206,6 @@ export default function ImageDialog({
                             const toastId = toast.loading("Saving image...")
                             try {
                                 setSending(true)
-                                console.log("here 1")
                                 const draftPostId = await sendImage(
                                     image_file,
                                     newX1,

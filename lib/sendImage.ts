@@ -38,10 +38,10 @@ export default async function sendImage(
     }
     const url = signedURLResult.success.url
     const draftPostId = signedURLResult.success.postId
-
     const result = await fetch(url, {
         method: "PUT",
         body: file,
+        mode: "cors",
         headers: {
             "Content-Type": file.type,
         },

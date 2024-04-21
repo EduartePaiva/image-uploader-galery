@@ -21,12 +21,8 @@ export default function useInfiniteImagesSchorl() {
             return
         }
         if (newImages.success.length < 10) {
-            console.log(newImages.success.length)
-            console.log("Images reached the end")
             setHasNextPage(false)
         }
-
-        console.log("Number of images:" + (images.length + newImages.success.length))
         appendImagesToTheEnd(newImages.success)
         setIsFetching(false)
     }

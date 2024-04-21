@@ -9,7 +9,6 @@ export default function BackToTopButton() {
 
     useEffect(() => {
         const scrollListener = (_: Event) => {
-            console.log("scrolling")
             if (document.documentElement.scrollTop > 100) {
                 setBtnOpacity(90)
             } else {

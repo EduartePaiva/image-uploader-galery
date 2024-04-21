@@ -13,7 +13,6 @@ import ImageCardSkeleton from "./ImageCardSkeleton"
 import useIntersectionObserver from "@/hooks/useIntersectionObserver"
 
 async function downloadClick(imageId: string) {
-    console.log("Downloading image:" + imageId)
     const toastId = toast.loading("Downloading...")
     const response = await getImagePresignedUrlAction(imageId)
     if (response.success !== undefined) {
@@ -46,28 +45,6 @@ export default function LoadImages() {
         hasNextPage,
         isFetching,
     })
-
-    // // observer logic
-    // const observer = useRef<IntersectionObserver | null>(null)
-    // const lastElementRef = useCallback(
-    //     (node: HTMLDivElement | null) => {
-    //         if (node === null) return
-    //         if (isFetching) return
-    //         if (observer.current !== null) {
-    //             console.log("disconnecting observer", observer)
-    //             observer.current.disconnect()
-    //         }
-    //         console.log("creating observer")
-    //         observer.current = new IntersectionObserver((entries) => {
-    //             if (entries[0].isIntersecting && hasNextPage) {
-    //                 console.log("calling fetch more images")
-    //                 fetchMoreImages()
-    //             }
-    //         })
-    //         observer.current.observe(node)
-    //     },
-    //     [isFetching, observer, fetchMoreImages, hasNextPage],
-    // )
 
     return (
         <>

@@ -25,6 +25,5 @@ export type envTypes = z.infer<typeof envSchema>
  */
 test("Testing environment variables", () => {
     const envs = process.env
-    console.log(envs)
     expect(envSchema.safeParse(envs).success).toBeTruthy()
 })
