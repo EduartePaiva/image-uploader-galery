@@ -68,8 +68,9 @@ export default function ImageDialog({
         setImgZoomIn(newZoomInValue)
     }
 
-    const onMouseDown = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+    const onPointerDown = (e: React.PointerEvent<HTMLImageElement>) => {
         if (imgRef.current == null) return
+        if (!e.isPrimary) return
         const shiftX = e.clientX - translateX
         const shiftY = e.clientY - translateY
 
@@ -91,16 +92,16 @@ export default function ImageDialog({
             imgRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`
         }
 
-        function onMouseMove(event: MouseEvent) {
+        function onPointerMove(event: MouseEvent) {
             moveAt(event.pageX - shiftX, event.pageY - shiftY)
         }
 
-        window.onmousemove = onMouseMove
-        window.onmouseup = function () {
+        window.onpointermove = onPointerMove
+        window.onpointerup = function () {
             setTranslateX(newTranslateX)
             setTranslateY(newTranslateY)
-            window.onmousemove = null
-            window.onmouseup = null
+            window.onpointermove = null
+            window.onpointerup = null
         }
     }
 
@@ -154,7 +155,7 @@ export default function ImageDialog({
                         className="h-full min-w-[700px] cursor-grab select-none absolute"
                         src={imageUrl}
                         alt="uploaded image"
-                        onMouseDown={onMouseDown}
+                        onPointerDown={onPointerDown}
                         ref={imgRef}
                     />
                     <div
