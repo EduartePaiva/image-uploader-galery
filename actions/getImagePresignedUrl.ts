@@ -9,6 +9,7 @@ import { and, eq } from "drizzle-orm"
 //aws stuff
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+import { z } from "zod"
 
 const s3 = new S3Client({
     region: process.env.MY_AWS_BUCKET_REGION,
@@ -29,8 +30,11 @@ type getImagePresignedReturn = Promise<
       }
 >
 
-export async function getImagePresignedUrlAction(imageId: string): getImagePresignedReturn {
+const zodSchema = z.string()
+
+export async function getImagePresignedUrlAction(unparsedImageId: string): getImagePresignedReturn {
     try {
+        const imageId = zodSchema.parse(unparsedImageId)
         const { userId } = auth()
         if (!userId) return { failure: "Unauthenticated" }
 

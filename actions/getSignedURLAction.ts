@@ -7,6 +7,7 @@ import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import crypto from "crypto"
 import { clerkClient } from "@clerk/nextjs"
+import { z } from "zod"
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
 
 const s3 = new S3Client({
@@ -21,16 +22,20 @@ const acceptedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 
 const maxFileSize = 1024 * 1024 * 10 //10MB
 
-export default async function getSignedURL(
-    type: string,
-    size: number,
-    checksum: string,
-    x1: string,
-    y1: string,
-    portraitWidth: string,
-    portraitHight: string,
-) {
+const zodSchema = z.object({
+    type: z.string(),
+    size: z.number(),
+    checksum: z.string(),
+    x1: z.string(),
+    y1: z.string(),
+    portraitWidth: z.string(),
+    portraitHight: z.string(),
+})
+
+export default async function getSignedURL(unparsedGetSignedParams: z.infer<typeof zodSchema>) {
     try {
+        const { checksum, portraitHight, portraitWidth, size, type, x1, y1 } =
+            zodSchema.parse(unparsedGetSignedParams)
         const { userId } = auth()
         if (!userId) {
             return { failure: "Not authenticated" }

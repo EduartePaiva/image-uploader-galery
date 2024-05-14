@@ -4,6 +4,7 @@ import { auth, clerkClient } from "@clerk/nextjs"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
+import { z } from "zod"
 
 // s3 stuff
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
@@ -28,8 +29,11 @@ const lambdaClient = new LambdaClient({
     },
 })
 
-export default async function confirmImageUploaded(draftPostId: string) {
+const zodSchema = z.string()
+
+export default async function confirmImageUploaded(unparsedDraftPostId: string) {
     try {
+        const draftPostId = zodSchema.parse(unparsedDraftPostId)
         const { userId } = auth()
         //auth the user
         if (!userId) {

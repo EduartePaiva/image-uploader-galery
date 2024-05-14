@@ -9,6 +9,7 @@ import type { ImageData } from "@/types/types.t"
 //aws stuff
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+import { z } from "zod"
 
 const s3 = new S3Client({
     region: process.env.MY_AWS_BUCKET_REGION,
@@ -30,8 +31,11 @@ type getImageDataReturn =
           failure?: undefined
       }
 
-export async function getImagesDataAction(cursor?: number): Promise<getImageDataReturn> {
+const zodScheme = z.number().optional()
+
+export async function getImagesDataAction(unparsedCursor?: number): Promise<getImageDataReturn> {
     try {
+        const cursor = zodScheme.parse(unparsedCursor)
         const { userId } = auth()
 
         if (!userId) {

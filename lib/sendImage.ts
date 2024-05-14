@@ -21,18 +21,16 @@ export default async function sendImage(
     portrait_width: string,
     portrait_hight: string,
 ) {
-    //statusmessage(uploading file)
-    //setLoading(true)
     const checksum = await computeSHA256(file)
-    const signedURLResult = await getSignedURL(
-        file.type,
-        file.size,
+    const signedURLResult = await getSignedURL({
+        type: file.type,
+        size: file.size,
         checksum,
         x1,
         y1,
-        portrait_width,
-        portrait_hight,
-    )
+        portraitWidth: portrait_width,
+        portraitHight: portrait_hight,
+    })
     if (signedURLResult.failure !== undefined) {
         throw new Error(signedURLResult.failure)
     }

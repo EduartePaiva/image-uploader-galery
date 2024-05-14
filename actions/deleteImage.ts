@@ -8,6 +8,7 @@ import { clerkClient } from "@clerk/nextjs"
 
 // AWS IMPORTS
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3"
+import { z } from "zod"
 
 const s3 = new S3Client({
     region: process.env.MY_AWS_BUCKET_REGION,
@@ -17,8 +18,11 @@ const s3 = new S3Client({
     },
 })
 
-export async function deleteImageAction(imageId: string) {
+const zodSchema = z.string()
+
+export async function deleteImageAction(unparsedImageId: string) {
     try {
+        const imageId = zodSchema.parse(unparsedImageId)
         const { userId } = auth()
         if (!userId) return { failure: "User not authenticated" }
 

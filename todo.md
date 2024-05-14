@@ -7,6 +7,7 @@
 -   [x] Publish the project.
 -   [x] make https for dev environment
 -   [x] check why on mobile I can't upload.
--   [x] solve the error that you can't move the image on mobile
+-   [x] solve the error that you can't move the image on mobile.
+-   [x] authenticate server actions data with zod in a nice way.
 -   [_] Configure cors for s3 bucket.
 -   [_] Produce the documentation in the readMe.
