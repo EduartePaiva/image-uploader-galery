@@ -1,36 +1,33 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## This project is a image upload and processing system.
 
-First, run the development server:
+It started as a idea to upload profile pictures images to a storage system, this kind of profile picture upload can be extremely optimized there are three types of optimization in here:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 1 Image compression.
+- 2 Image cropping.
+- 3 Image processing with aws lambda.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Image compression + Image cropping.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+When the user upload some image the image will be compressed to a 400x400 pixels and convert to format JPEG with a ppi (pixels per inch) of 75.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Image processing
 
-## Learn More
+All of this happens inside a aws lambda function, this lambda function is written in rust and is optimized to work on a ARM processor.  
+The choice for a lambda function is the ability to scale up or down depending on the demand.
 
-To learn more about Next.js, take a look at the following resources:
+The code of this lambra function is in this repository: [https://github.com/EduartePaiva/image-uploader-rust-lambda](https://github.com/EduartePaiva/image-uploader-rust-lambda)
 
--   [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
--   [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Things related to the gallery.
 
-## Deploy on Vercel
+For the website gallery in the authentication part I used clerk, for the images they are loaded 10 images at a time using a technique of infinite scroll that will load more images as the user scrolls down.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For the database for storing images record I used a postgres product [cockroachDB](https://www.cockroachlabs.com/), they offer a pretty good free tier plan.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+For storing and processing I'm using AWS
+
+
+## Diagram of uploading one image:
+
