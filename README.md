@@ -1,3 +1,5 @@
+![webapp homepage](readme_assets/gallery_homepage.png?raw=true "Title")
+
 ## This project is a image upload and processing system.
 
 It started as a idea to upload profile pictures images to a storage system, this kind of profile picture upload can be extremely optimized there are three types of optimization in here:
