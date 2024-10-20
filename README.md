@@ -1,5 +1,3 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## This project is a image upload and processing system.
 
 It started as a idea to upload profile pictures images to a storage system, this kind of profile picture upload can be extremely optimized there are three types of optimization in here:
@@ -31,3 +29,4 @@ For storing and processing I'm using AWS
 
 ## Diagram of uploading one image:
 
+![Upload image diagram](readme_assets/image_uploading_diagram.svg?raw=true "Title")
