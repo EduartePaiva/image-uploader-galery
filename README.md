@@ -32,3 +32,6 @@ For storing and processing I'm using AWS
 ## Diagram of uploading one image:
 
 ![Upload image diagram](readme_assets/image_uploading_diagram.svg?raw=true "Title")
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
