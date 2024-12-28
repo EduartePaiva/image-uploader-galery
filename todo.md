@@ -12,3 +12,4 @@
 - [_] Configure cors for s3 bucket.
 - [x] Produce the documentation in the readMe.
 - [_] Test more the updated version to next15 before merging
+- [_] make the eslint config work
