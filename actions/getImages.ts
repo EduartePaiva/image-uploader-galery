@@ -1,6 +1,6 @@
 "use server"
 
-import { auth } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import { and, desc, eq, lt } from "drizzle-orm"
@@ -23,20 +23,20 @@ const PAGINATION_NUMBER = 10
 
 type getImageDataReturn =
     | {
-          failure: string
-          success?: undefined
-      }
+        failure: string
+        success?: undefined
+    }
     | {
-          success: ImageData[]
-          failure?: undefined
-      }
+        success: ImageData[]
+        failure?: undefined
+    }
 
 const zodScheme = z.number().optional()
 
 export async function getImagesDataAction(unparsedCursor?: number): Promise<getImageDataReturn> {
     try {
         const cursor = zodScheme.parse(unparsedCursor)
-        const { userId } = auth()
+        const { userId } = await auth()
 
         if (!userId) {
             return { failure: "User not authenticated" }
@@ -79,7 +79,7 @@ export async function getImagesDataAction(unparsedCursor?: number): Promise<getI
             success: presignedImagesData,
         }
     } catch (err) {
-        console.error("Error while getting images")
+        console.error("Error while getting images", err)
         return { failure: "Something has throw" }
     }
 }

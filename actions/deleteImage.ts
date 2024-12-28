@@ -1,10 +1,9 @@
 "use server"
 
-import { auth } from "@clerk/nextjs"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
-import { clerkClient } from "@clerk/nextjs"
 
 // AWS IMPORTS
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3"
@@ -23,10 +22,11 @@ const zodSchema = z.string()
 export async function deleteImageAction(unparsedImageId: string) {
     try {
         const imageId = zodSchema.parse(unparsedImageId)
-        const { userId } = auth()
+        const { userId } = await auth()
+        const client = await clerkClient()
         if (!userId) return { failure: "User not authenticated" }
 
-        const userPromise = clerkClient.users.getUser(userId)
+        const userPromise = client.users.getUser(userId)
         const imageKey = await db
             .delete(images)
             .where(and(eq(images.userId, userId), eq(images.id, imageId)))
@@ -44,7 +44,7 @@ export async function deleteImageAction(unparsedImageId: string) {
         const user = await userPromise
         const { user_images_count, user_plan } = user.publicMetadata
         if (user_images_count !== undefined && user_plan !== undefined) {
-            clerkClient.users.updateUserMetadata(userId, {
+            client.users.updateUserMetadata(userId, {
                 publicMetadata: {
                     user_plan,
                     user_images_count: user_images_count > 0 ? user_images_count - 1 : 0,

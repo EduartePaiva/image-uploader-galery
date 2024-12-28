@@ -1,7 +1,7 @@
 "use server"
 
 //auth
-import { auth } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 //database
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
@@ -21,13 +21,13 @@ const s3 = new S3Client({
 
 type getImagePresignedReturn = Promise<
     | {
-          success?: undefined
-          failure: string
-      }
+        success?: undefined
+        failure: string
+    }
     | {
-          success: string
-          failure?: undefined
-      }
+        success: string
+        failure?: undefined
+    }
 >
 
 const zodSchema = z.string()
@@ -35,7 +35,7 @@ const zodSchema = z.string()
 export async function getImagePresignedUrlAction(unparsedImageId: string): getImagePresignedReturn {
     try {
         const imageId = zodSchema.parse(unparsedImageId)
-        const { userId } = auth()
+        const { userId } = await auth()
         if (!userId) return { failure: "Unauthenticated" }
 
         const imageURL = await db

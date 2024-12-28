@@ -1,6 +1,6 @@
 "use server"
 
-import { auth, clerkClient } from "@clerk/nextjs"
+import { auth, currentUser, clerkClient } from "@clerk/nextjs/server"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
@@ -34,7 +34,8 @@ const zodSchema = z.string()
 export default async function confirmImageUploaded(unparsedDraftPostId: string) {
     try {
         const draftPostId = zodSchema.parse(unparsedDraftPostId)
-        const { userId } = auth()
+        const { userId } = await auth()
+        const client = await clerkClient()
         //auth the user
         if (!userId) {
             return { failure: "Not authenticated" }
@@ -48,10 +49,14 @@ export default async function confirmImageUploaded(unparsedDraftPostId: string) 
             })
             .from(images)
             .where(and(eq(images.userId, userId), eq(images.id, draftPostId)))
-        const userPromise = clerkClient.users.getUser(userId)
+        const userPromise = currentUser()
 
         // await both results
         const [user, dbResult] = await Promise.all([userPromise, dbResultPromise])
+
+        if (user === null) {
+            return { failure: "Null user" }
+        }
 
         let { user_images_count, user_plan } = user.publicMetadata
         if (user_plan === undefined) user_plan = "free"
@@ -96,7 +101,7 @@ export default async function confirmImageUploaded(unparsedDraftPostId: string) 
         )
 
         // update clerk image count
-        const clerkUpdatePromise = clerkClient.users.updateUserMetadata(userId, {
+        const clerkUpdatePromise = client.users.updateUserMetadata(userId, {
             publicMetadata: {
                 user_plan,
                 user_images_count: user_images_count + 1,

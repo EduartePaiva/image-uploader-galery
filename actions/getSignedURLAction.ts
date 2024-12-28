@@ -1,12 +1,11 @@
 "use server"
 
-import { auth } from "@clerk/nextjs"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import db from "@/db/drizzle"
 import { images } from "@/db/schema/images"
 import crypto from "crypto"
-import { clerkClient } from "@clerk/nextjs"
 import { z } from "zod"
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
 
@@ -36,13 +35,14 @@ export default async function getSignedURL(unparsedGetSignedParams: z.infer<type
     try {
         const { checksum, portraitHight, portraitWidth, size, type, x1, y1 } =
             zodSchema.parse(unparsedGetSignedParams)
-        const { userId } = auth()
+        const { userId } = await auth()
         if (!userId) {
             return { failure: "Not authenticated" }
         }
 
         //validate the user plan
-        const user = await clerkClient.users.getUser(userId)
+        const client = await clerkClient()
+        const user = await client.users.getUser(userId)
         let { user_images_count, user_plan } = user.publicMetadata
         if (user_plan === undefined) user_plan = "free"
         if (user_images_count === undefined) user_images_count = 0
