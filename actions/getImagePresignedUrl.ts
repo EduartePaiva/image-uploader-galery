@@ -3,7 +3,7 @@
 //auth
 import { auth } from "@clerk/nextjs/server"
 //database
-import db from "@/db/drizzle"
+import db from "@/db"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
 //aws stuff

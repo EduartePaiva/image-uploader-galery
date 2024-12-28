@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
-import db from "@/db/drizzle"
+import db from "@/db"
 import { images } from "@/db/schema/images"
 import { and, desc, eq, lt } from "drizzle-orm"
 import type { ImageData } from "@/types/types.t"

@@ -3,7 +3,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
-import db from "@/db/drizzle"
+import db from "@/db"
 import { images } from "@/db/schema/images"
 import crypto from "crypto"
 import { z } from "zod"

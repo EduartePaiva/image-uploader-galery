@@ -3,7 +3,7 @@
 import toast from "react-hot-toast"
 import { AlertDialogConfirm } from "./AlertDialogConfirm"
 import ImageCard from "./ImageCard"
-import { useCallback, useRef, useState } from "react"
+import { useState } from "react"
 import { deleteImageAction } from "@/actions/deleteImage"
 import { getImagePresignedUrlAction } from "@/actions/getImagePresignedUrl"
 import { useUser } from "@clerk/nextjs"
@@ -34,7 +34,7 @@ export default function LoadImages() {
     const [currentImageClick, setCurrentImageClick] = useState("")
     const { user } = useUser()
     const { images, removeOneImageFromImages } = useImageStoreContext()
-    const { error, hasNextPage, isFetching, fetchMoreImages } = useInfiniteImagesSchorl()
+    const { hasNextPage, isFetching, fetchMoreImages } = useInfiniteImagesSchorl()
 
     function deleteClick(imageId: string) {
         setCurrentImageClick(imageId)

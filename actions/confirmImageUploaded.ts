@@ -1,7 +1,7 @@
 "use server"
 
 import { auth, currentUser, clerkClient } from "@clerk/nextjs/server"
-import db from "@/db/drizzle"
+import db from "@/db"
 import { images } from "@/db/schema/images"
 import { and, eq } from "drizzle-orm"
 import { z } from "zod"
