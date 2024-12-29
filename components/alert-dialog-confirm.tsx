@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -7,13 +9,12 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Dispatch, SetStateAction } from "react"
+} from "@/components/ui/alert-dialog";
 
 interface AlertDialogConfirm {
-    onConfirm: () => void
-    open: boolean
-    onOpenChange: Dispatch<SetStateAction<boolean>>
+    onConfirm: () => void;
+    open: boolean;
+    onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
 
 export function AlertDialogConfirm({ onConfirm, open, onOpenChange }: AlertDialogConfirm) {
@@ -33,5 +34,5 @@ export function AlertDialogConfirm({ onConfirm, open, onOpenChange }: AlertDialo
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
+    );
 }

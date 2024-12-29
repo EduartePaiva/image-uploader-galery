@@ -1,7 +1,7 @@
-import Header from "./Header"
-import Footer from "./Footer"
-import Main from "./Main"
-import BackToTopButton from "@/components/BackToTopButton"
+import Header from "./header";
+import Footer from "./footer";
+import Main from "./main";
+import BackToTopButton from "@/components/back-to-top-button";
 
 export default function Home() {
     return (
@@ -11,5 +11,5 @@ export default function Home() {
             <Footer />
             <BackToTopButton />
         </div>
-    )
+    );
 }

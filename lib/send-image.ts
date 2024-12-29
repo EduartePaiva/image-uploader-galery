@@ -1,12 +1,12 @@
-import getSignedURL from "@/actions/getSignedURLAction"
+import getSignedURL from "@/actions/get-signed-url-action";
 
 const computeSHA256 = async (file: File) => {
-    const buffer = await file.arrayBuffer()
-    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer)
-    const hashArray = Array.from(new Uint8Array(hashBuffer))
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
-    return hashHex
-}
+    const buffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    return hashHex;
+};
 
 /**
  * This function can throw an error
@@ -21,7 +21,7 @@ export default async function sendImage(
     portrait_width: string,
     portrait_hight: string,
 ) {
-    const checksum = await computeSHA256(file)
+    const checksum = await computeSHA256(file);
     const signedURLResult = await getSignedURL({
         type: file.type,
         size: file.size,
@@ -30,12 +30,12 @@ export default async function sendImage(
         y1,
         portraitWidth: portrait_width,
         portraitHight: portrait_hight,
-    })
+    });
     if (signedURLResult.failure !== undefined) {
-        throw new Error(signedURLResult.failure)
+        throw new Error(signedURLResult.failure);
     }
-    const url = signedURLResult.success.url
-    const draftPostId = signedURLResult.success.postId
+    const url = signedURLResult.success.url;
+    const draftPostId = signedURLResult.success.postId;
     const result = await fetch(url, {
         method: "PUT",
         body: file,
@@ -43,13 +43,13 @@ export default async function sendImage(
         headers: {
             "Content-Type": file.type,
         },
-    })
+    });
 
-    const status = result.status
+    const status = result.status;
     if (status !== 200) {
-        const statusText = result.statusText
-        throw new Error(statusText)
+        const statusText = result.statusText;
+        throw new Error(statusText);
     }
 
-    return draftPostId
+    return draftPostId;
 }

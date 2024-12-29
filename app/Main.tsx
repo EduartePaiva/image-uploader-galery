@@ -1,6 +1,6 @@
-import LoadImages from "@/components/LoadImages"
-import UploadImage from "@/components/UploadImage"
-import ImageStoreContextProvider from "@/context/image-store-context"
+import LoadImages from "@/components/load-images";
+import UploadImage from "@/components/upload-image";
+import ImageStoreContextProvider from "@/context/image-store-context";
 
 export default async function Main() {
     return (
@@ -10,5 +10,5 @@ export default async function Main() {
                 <LoadImages />
             </ImageStoreContextProvider>
         </main>
-    )
+    );
 }
