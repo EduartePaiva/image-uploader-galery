@@ -1,6 +1,6 @@
-import { NextConfig } from "next";
 import { env as envClient } from "@/env/client";
 import { env as envServer } from "@/env/server";
+import { NextConfig } from "next";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const envs = [envClient, envServer];
@@ -19,6 +19,6 @@ const nextConfig: NextConfig = {
     eslint: {
         dirs: ["components", "app", "actions", "context", "db", "hooks", "lib", "utils"],
     },
-}
+};
 
-export default nextConfig
+export default nextConfig;
