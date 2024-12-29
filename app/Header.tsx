@@ -1,14 +1,14 @@
-import HowMuchImages from "@/components/HowMuchImages"
-import ShowUserButton from "@/components/ShowUserButton"
-import { ModeToggle } from "@/components/ThemeModeToggle"
+import HowMuchImages from "@/components/how-much-images";
+import ShowUserButton from "@/components/show-user-button";
+import { ModeToggle } from "@/components/theme-mode-toggle";
 
 export default function Header() {
     return (
-        <header className="container h-20 mb-10 self-center flex items-center gap-4">
-            <h1 className="font-semibold text-4xl tracking-wider mr-auto">Gallery</h1>
+        <header className="container mb-10 flex h-20 items-center gap-4 self-center">
+            <h1 className="mr-auto text-4xl font-semibold tracking-wider">Gallery</h1>
             <HowMuchImages />
             <ModeToggle />
             <ShowUserButton />
         </header>
-    )
+    );
 }

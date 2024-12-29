@@ -1,7 +1,7 @@
-import Image from "next/image"
-import { Button } from "./ui/button"
-import { Download, Trash2 } from "lucide-react"
-import { Skeleton } from "./ui/skeleton"
+import Image from "next/image";
+import { Button } from "./ui/button";
+import { Download, Trash2 } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
 
 export default function ImageCardSkeleton() {
     return (
@@ -28,5 +28,5 @@ export default function ImageCardSkeleton() {
                 </div>
             </div>
         </Skeleton>
-    )
+    );
 }

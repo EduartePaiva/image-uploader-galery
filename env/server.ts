@@ -13,11 +13,19 @@ export const env = createEnv({
             .refine((s) => s === "true" || s === "false")
             .transform((s) => s === "true")
             .optional(),
+        MY_AWS_BUCKET_REGION: z.string(),
+        MY_AWS_ACCESS_KEY: z.string(),
+        MY_AWS_SECRET_ACCESS_KEY: z.string(),
+        MY_AWS_LAMBDA_NAME: z.string(),
+        MY_AWS_LAMBDA_REGION: z.string(),
+        MY_AWS_PROCESSED_IMAGES_BUCKET_NAME: z.string(),
+        MY_AWS_BUCKET_NAME: z.string()
     },
     onValidationError: (error: ZodError) => {
         console.error("❌ Invalid environment variables:", error.flatten().fieldErrors);
         process.exit(1);
     },
     emptyStringAsUndefined: true,
+    // eslint-disable-next-line n/no-process-env
     experimental__runtimeEnv: process.env,
 });

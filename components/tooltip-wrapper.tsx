@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 interface TooltipWrapperProps {
     children: React.ReactNode
@@ -15,5 +15,5 @@ export default function TooltipWrapper({ children, tooltipMessage }: TooltipWrap
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
-    )
+    );
 }
